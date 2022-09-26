@@ -1,7 +1,3 @@
 library apptex_chat;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/apptex_chat.dart';
