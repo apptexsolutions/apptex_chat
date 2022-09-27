@@ -416,7 +416,7 @@ class ImageBubble extends StatelessWidget {
     String date = getChatDate(msgDate);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         date,
         style: myStyle(12, false, color: Colors.grey.shade600),

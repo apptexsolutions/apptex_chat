@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:apptex_chat/apptex_chat.dart';
 import 'package:example/custom_button_square.dart';
 import 'package:firebase_core/firebase_core.dart';

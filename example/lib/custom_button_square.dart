@@ -38,7 +38,7 @@ class CustomButtonSquare extends StatelessWidget {
                 buttonName,
                 style: TextStyle(fontSize: 15, color: textColor),
               ),
-              if (icon != null) SizedBox(width: 10),
+              if (icon != null) const SizedBox(width: 10),
               if (icon != null)
                 Icon(
                   icon,
