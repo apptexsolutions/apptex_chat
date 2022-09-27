@@ -137,6 +137,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   double paddingAnimation = 24;
+  bool showSendButton = false;
 
   Widget chatMessages() {
     return GetX<ChatController>(
@@ -258,11 +259,17 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Expanded(
-              child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
             child: Container(
-              color: Colors.grey[350],
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 2),
+              padding: const EdgeInsets.only(
+                left: 15,
+                top: 2,
+                bottom: 2,
+              ),
+              margin: const EdgeInsets.only(right: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.grey[350],
+              ),
               child: TextField(
                 onChanged: (val) {
                   //  addMesage(false);
@@ -270,8 +277,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   setState(() {
                     if (val.length == 0) {
                       paddingAnimation = 24;
+                      showSendButton = false;
                     } else {
                       paddingAnimation = 15;
+                      showSendButton = true;
                     }
                   });
                 },
@@ -285,25 +294,47 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 decoration: InputDecoration(
                     hintText: "Send a message..",
+                    suffixIcon: showSendButton
+                        ? GestureDetector(
+                            onTap: () {
+                              addMesage(true);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: kprimary1,
+                              ),
+                              child: const Icon(
+                                Icons.send,
+                                color: Colors.white,
+                                size: 27,
+                              ),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              //TODO send Audio Message
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: kprimary1,
+                              ),
+                              child: const Icon(
+                                Icons.mic,
+                                color: Colors.white,
+                                size: 27,
+                              ),
+                            ),
+                          ),
                     hintStyle:
                         TextStyle(color: Colors.grey.shade600.withOpacity(0.7)),
                     border: InputBorder.none),
               ),
             ),
-          )),
-          GestureDetector(
-            onTap: () {
-              addMesage(true);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Icon(
-                Icons.send,
-                color: Colors.grey.shade600,
-                size: 27,
-              ),
-            ),
-          )
+          ),
         ],
       ),
     );
@@ -338,16 +369,18 @@ class MessageBubble extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
             //padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
 
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: isMine ? Colors.grey.shade200 : kprimary2,
               borderRadius: BorderRadius.only(
-                topLeft: isMine ? Radius.circular(radius) : Radius.circular(0),
+                topLeft:
+                    isMine ? Radius.circular(radius) : const Radius.circular(0),
                 bottomLeft:
                     isMine ? Radius.circular(radius) : Radius.circular(radius),
                 bottomRight:
                     isMine ? Radius.circular(radius) : Radius.circular(radius),
-                topRight: isMine ? Radius.circular(0) : Radius.circular(radius),
+                topRight:
+                    isMine ? const Radius.circular(0) : Radius.circular(radius),
               ),
             ),
             child: Text(
@@ -463,7 +496,7 @@ class ProfilePic extends StatelessWidget {
               color: kprimary1,
               width: imsix,
               height: imsix,
-              padding: EdgeInsets.all(7),
+              padding: const EdgeInsets.all(7),
               child: Image(
                 image: NetworkImage(
                   url,
