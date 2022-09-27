@@ -26,9 +26,8 @@ class MyApp extends StatelessWidget {
 }
 
 class StartChat extends StatelessWidget {
-  StartChat() {
-    AppTexChat.initializeUser(
-        FullName: "Jamshed Khan", your_uuid: "JamshedUUID");
+  StartChat({Key? key}) : super(key: key) {
+    AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: "uuid2");
   }
 
   @override
@@ -42,11 +41,11 @@ class StartChat extends StatelessWidget {
         children: [
           Center(
             child: CustomButtonSquare(
-              OnTap: () {
+              onTap: () {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
                 AppTexChat.startChat(context,
-                    receiver_name: "Sayed idrees", receiver_id: "sayeduuid");
+                    receiver_name: "Sayed idrees", receiver_id: "uuid1");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',

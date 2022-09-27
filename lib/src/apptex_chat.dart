@@ -1,26 +1,23 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:apptex_chat/src/Controllers/chat_conrtroller.dart';
+import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class AppTexChat {
-  static ChatController? _chatCon;
   static String? _uuid;
   static String? _name;
   static String? _profileURl;
-  static FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
   static bool started = false;
-  static String ChatCollection = "Chats";
   static initializeUser(
       {required String FullName,
       required String your_uuid,
       String profileUrl = ""}) {
     if (!started) {
-      _chatCon ??= Get.put(ChatController());
       _uuid ??= your_uuid;
       _name ??= FullName;
       _profileURl ??= profileUrl;
@@ -32,7 +29,7 @@ class AppTexChat {
       {required String receiver_name,
       required String receiver_id,
       String receiver_profileUrl = ""}) {
-    if (_chatCon == null || _uuid == null) {
+    if (_uuid == null) {
       // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please Call Initialize function before calling Start chat");
@@ -57,10 +54,13 @@ class AppTexChat {
               profileUrl: receiver_profileUrl)
         ]);
 
-    _firebaseFirestore
-        .collection(ChatCollection)
+    firebaseFirestore
+        .collection(roomCollection)
         .doc(chatRoomID)
         .set(model.toMap());
+
+    ChatController controller = ChatController(chatRoomID);
+    controller.startChat(context, model, _uuid!);
   }
 
   static String getGenericuuid(String userBUuid) {

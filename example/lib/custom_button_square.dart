@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomButtonSquare extends StatelessWidget {
   final String buttonName;
   final Color buttonColor;
-  final VoidCallback OnTap;
+  final VoidCallback onTap;
   final double width;
   final Color? textColor;
   final IconData? icon;
@@ -12,7 +12,7 @@ class CustomButtonSquare extends StatelessWidget {
       {Key? key,
       required this.buttonColor,
       required this.buttonName,
-      required this.OnTap,
+      required this.onTap,
       this.width = 150,
       this.textColor = Colors.black,
       this.icon})
@@ -24,7 +24,7 @@ class CustomButtonSquare extends StatelessWidget {
       width: width,
       height: 37,
       child: GestureDetector(
-        onTap: OnTap,
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(6)),
