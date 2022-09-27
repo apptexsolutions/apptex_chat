@@ -161,7 +161,33 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemBuilder: (context, index) {
                     MessageModel model = controller.chats[index];
 
-                    return correspondingTypeAllocation(model);
+                    return Column(
+                      children: [
+                        correspondingTypeAllocation(model),
+                        if (index != 0 &&
+                            model.timestamp.toDate().day !=
+                                controller.chats[index - 1].timestamp
+                                    .toDate()
+                                    .day)
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Text(
+                              controller.chats[index - 1].timestamp
+                                  .toDate()
+                                  .toString()
+                                  .split(" ")[0],
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
                   }),
             );
           }
