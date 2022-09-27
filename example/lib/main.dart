@@ -26,8 +26,8 @@ class MyApp extends StatelessWidget {
 }
 
 class StartChat extends StatelessWidget {
-  String myUUID = "xxx1";
-  String otherUser = "xxx2";
+  String myUUID = "xxx2";
+  String otherUser = "xxx1";
 
   StartChat({Key? key}) : super(key: key) {
     AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
@@ -43,12 +43,12 @@ class StartChat extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            "My User UID    : " + myUUID,
+            "A :     My User UID    : " + myUUID,
           ),
           Text(
-            "Other User UID : " + otherUser,
+            "B : Other User UID    : " + otherUser,
           ),
-          SizedBox(
+          const SizedBox(
             height: 29,
           ),
           Center(
