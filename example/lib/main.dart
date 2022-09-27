@@ -50,9 +50,7 @@ class StartChat extends StatelessWidget {
           Text(
             "B : Other User UID    : " + otherUser,
           ),
-          const SizedBox(
-            height: 29,
-          ),
+          const SizedBox(height: 29),
           Center(
             child: CustomButtonSquare(
               onTap: () {
@@ -63,6 +61,20 @@ class StartChat extends StatelessWidget {
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',
+              width: size.width * 0.8,
+            ),
+          ),
+          const SizedBox(height: 29),
+          Center(
+            child: CustomButtonSquare(
+              onTap: () {
+                //this required two uuids..
+                //current User uuid, and where you want to chat with.
+                AppTexChat.startChat(context,
+                    receiver_name: "Sayed idrees", receiver_id: otherUser);
+              },
+              buttonColor: Colors.green,
+              buttonName: 'Open My Chats',
               width: size.width * 0.8,
             ),
           )

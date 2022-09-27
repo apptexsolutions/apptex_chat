@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:apptex_chat/src/Models/MessageModel.dart';
+import 'package:apptex_chat/src/Screens/FullScreenImage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,75 +49,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       backgroundColor: kprimary1,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: kprimary1,
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        title: Container(
-          width: size.width,
-          child: Row(
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.grey.shade800,
-                    size: 22,
-                  ),
-                ),
-              ),
-              ProfilePic(
-                widget.myUID,
-                size: 40,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                    child: Text("Sayed Idrees",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 83, 115, 140),
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                    child: Text(
-                      "active",
-                      style: TextStyle(
-                          color: Color.fromARGB(255, 89, 108, 149),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+      appBar: myappbar(size, context),
       body: Stack(
         children: [
-          // Expanded(
-          //   child: Container(
-          //     padding: const EdgeInsets.symmetric(horizontal: 7),
-          //     decoration: BoxDecoration(color: Colors.white),
-          //     child: Stack(
-          //       children: [
-          //         chatMessages(),
-          //         if (widget.isSessionActive) typingArea(),
-          //         if (!widget.isSessionActive) sessionClosedMessage(size)
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Positioned(
             bottom: 0,
             child: Container(
@@ -144,6 +79,65 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  AppBar myappbar(Size size, BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: kprimary1,
+      centerTitle: false,
+      automaticallyImplyLeading: false,
+      title: Container(
+        width: size.width,
+        child: Row(
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.grey.shade800,
+                  size: 22,
+                ),
+              ),
+            ),
+            ProfilePic(
+              widget.myUID,
+              size: 40,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                  child: Text(widget.title,
+                      style: TextStyle(
+                          color: kprimary2,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600)),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                  child: const Text(
+                    "",
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 89, 108, 149),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  double paddingAnimation = 24;
+
   Widget chatMessages() {
     return GetX<ChatController>(
         init: widget.controller,
@@ -155,8 +149,10 @@ class _ChatScreenState extends State<ChatScreen> {
               style: myStyle(16, true, color: Colors.grey),
             ));
           } else {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
+            return AnimatedContainer(
+              padding: EdgeInsets.only(
+                  left: paddingAnimation, right: paddingAnimation, bottom: 15),
+              duration: const Duration(seconds: 1, milliseconds: 200),
               child: ListView.builder(
                   padding: const EdgeInsets.only(bottom: 60, top: 8),
                   itemCount: controller.chats.length,
@@ -270,6 +266,14 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 onChanged: (val) {
                   //  addMesage(false);
+
+                  setState(() {
+                    if (val.length == 0) {
+                      paddingAnimation = 24;
+                    } else {
+                      paddingAnimation = 15;
+                    }
+                  });
                 },
                 maxLines: 4,
                 minLines: 1,
@@ -317,19 +321,97 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double radius = 34;
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment:
+            isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (isMine) getdate(msgDate),
+          if (!isMine) Container(width: 3),
+          if (!isMine) ProfilePic(profileUrl, size: 30),
+          IntrinsicWidth(
+              child: Container(
+            constraints: BoxConstraints(
+                minWidth: 50,
+                maxWidth: MediaQuery.of(context).size.width * 0.6),
+            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+            //padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
+
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isMine ? Colors.grey.shade200 : kprimary2,
+              borderRadius: BorderRadius.only(
+                topLeft: isMine ? Radius.circular(radius) : Radius.circular(0),
+                bottomLeft:
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
+                bottomRight:
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
+                topRight: isMine ? Radius.circular(0) : Radius.circular(radius),
+              ),
+            ),
+            child: Text(
+              message,
+              style: TextStyle(
+                  color: Colors.grey.shade800,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13),
+            ),
+          )),
+          //  if (isMine) ProfilePic(profileUrl, size: 30),
+          //if (isMine) Container(width: 3),
+          if (!isMine) getdate(msgDate),
+        ]);
+  }
+}
+
+getdate(var msgDate) {
+  String date = getChatDate(msgDate);
+
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Text(
+      date,
+      style: myStyle(9, false, color: Colors.grey.shade600),
+    ),
+  );
+}
+
+class ImageBubble extends StatelessWidget {
+  final bool isMine;
+  final String message;
+  final String profileUrl;
+  final DateTime msgDate;
+  const ImageBubble(this.isMine, this.message, this.profileUrl, this.msgDate,
+      {Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    double boxSize = 180;
+    return Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment:
             isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isMine) Container(width: 3),
           if (!isMine) ProfilePic(profileUrl, size: 30),
+          if (isMine) getdate(msgDate),
           IntrinsicWidth(
-              child: Column(
-            crossAxisAlignment:
-                isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              Container(
+              child: Hero(
+            tag: message,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FullScreenImage(
+                              imgUrl: message,
+                            )));
+              },
+              child: Container(
+                height: boxSize,
+                width: boxSize,
                 constraints: BoxConstraints(
                     minWidth: 50,
                     maxWidth: MediaQuery.of(context).size.width / 1.3),
@@ -337,6 +419,8 @@ class MessageBubble extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
                 decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(message), fit: BoxFit.cover),
                   color: isMine ? kprimary1 : kprimary2,
                   borderRadius: BorderRadius.only(
                     topLeft: isMine
@@ -353,105 +437,11 @@ class MessageBubble extends StatelessWidget {
                         : const Radius.circular(20),
                   ),
                 ),
-                child: Text(
-                  message,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
-                ),
               ),
-              getdate()
-            ],
+            ),
           )),
-          //  if (isMine) ProfilePic(profileUrl, size: 30),
-          //if (isMine) Container(width: 3),
+          if (!isMine) getdate(msgDate),
         ]);
-  }
-
-  getdate() {
-    String date = getChatDate(msgDate);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Text(
-        date,
-        style: myStyle(12, false, color: Colors.grey.shade600),
-      ),
-    );
-  }
-}
-
-class ImageBubble extends StatelessWidget {
-  final bool isMine;
-  final String message;
-  final String profileUrl;
-  final DateTime msgDate;
-  const ImageBubble(this.isMine, this.message, this.profileUrl, this.msgDate,
-      {Key? key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment:
-            isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          if (!isMine) Container(width: 3),
-          if (!isMine) ProfilePic(profileUrl, size: 30),
-          IntrinsicWidth(
-              child: Column(
-            crossAxisAlignment:
-                isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: [
-              Container(
-                  constraints: BoxConstraints(
-                      minWidth: 50,
-                      maxWidth: MediaQuery.of(context).size.width / 1.3),
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: isMine ? kprimary1 : kprimary2,
-                    borderRadius: BorderRadius.only(
-                      topLeft: isMine
-                          ? const Radius.circular(20)
-                          : const Radius.circular(0),
-                      bottomLeft: isMine
-                          ? const Radius.circular(20)
-                          : const Radius.circular(10),
-                      bottomRight: isMine
-                          ? const Radius.circular(10)
-                          : const Radius.circular(20),
-                      topRight: isMine
-                          ? const Radius.circular(0)
-                          : const Radius.circular(20),
-                    ),
-                  ),
-                  child: Container(
-                    color: Colors.grey.shade300,
-                    child: Image(image: NetworkImage(message)),
-                  )),
-              getdate()
-            ],
-          )),
-          if (isMine) ProfilePic(profileUrl, size: 30),
-          if (isMine) Container(width: 3),
-        ]);
-  }
-
-  getdate() {
-    String date = getChatDate(msgDate);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Text(
-        date,
-        style: myStyle(12, false, color: Colors.grey.shade600),
-      ),
-    );
   }
 }
 
