@@ -6,13 +6,14 @@ import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../Controllers/chat_conrtroller.dart';
 import '../Controllers/contants.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatroomID;
-  final bool isSessionActive;
+
   final String title;
   final String userProfile;
   final String otherUserURl;
@@ -23,7 +24,6 @@ class ChatScreen extends StatefulWidget {
   ChatScreen(
       {required this.controller,
       required this.chatroomID,
-      required this.isSessionActive,
       required this.title,
       required this.userProfile,
       required this.otherUserURl,
@@ -47,49 +47,99 @@ class _ChatScreenState extends State<ChatScreen> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Column(
+      backgroundColor: kprimary1,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: kprimary1,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        title: Container(
+          width: size.width,
+          child: Row(
             children: [
-              myappbar(),
-              Expanded(
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.05),
-                  ),
-                  child: Stack(
-                    children: [
-                      chatMessages(),
-                      if (widget.isSessionActive) typingArea(),
-                      if (!widget.isSessionActive) sessionClosedMessage(size)
-                    ],
+                  padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                  child: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.grey.shade800,
+                    size: 22,
                   ),
                 ),
               ),
+              ProfilePic(
+                widget.myUID,
+                size: 40,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                    child: Text("Sayed Idrees",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 83, 115, 140),
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                    child: Text(
+                      "active",
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 89, 108, 149),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Positioned sessionClosedMessage(Size size) {
-    return Positioned(
-      bottom: 0,
-      child: SizedBox(
-        height: 40,
-        width: size.width,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "This sessions has been closed!",
-              style: myStyle(14, false, color: Colors.grey.shade700),
-            )
-          ],
-        ),
+      body: Stack(
+        children: [
+          // Expanded(
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 7),
+          //     decoration: BoxDecoration(color: Colors.white),
+          //     child: Stack(
+          //       children: [
+          //         chatMessages(),
+          //         if (widget.isSessionActive) typingArea(),
+          //         if (!widget.isSessionActive) sessionClosedMessage(size)
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50),
+                      topRight: Radius.circular(50))),
+              height: size.height * 0.87,
+              width: size.width,
+              child: Stack(
+                children: [
+                  Positioned.fill(child: chatMessages()),
+                  Positioned(
+                    bottom: 0,
+                    child: typingArea(size),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Positioned(top: 0, child: myappbar()),
+        ],
       ),
     );
   }
@@ -105,14 +155,18 @@ class _ChatScreenState extends State<ChatScreen> {
               style: myStyle(16, true, color: Colors.grey),
             ));
           } else {
-            return ListView.builder(
-                padding: const EdgeInsets.only(bottom: 60, top: 8),
-                itemCount: controller.chats.length,
-                reverse: true,
-                itemBuilder: (context, index) {
-                  MessageModel model = controller.chats[index];
-                  return correspondingTypeAllocation(model);
-                });
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7),
+              child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 60, top: 8),
+                  itemCount: controller.chats.length,
+                  reverse: true,
+                  itemBuilder: (context, index) {
+                    MessageModel model = controller.chats[index];
+
+                    return correspondingTypeAllocation(model);
+                  }),
+            );
           }
         });
   }
@@ -157,73 +211,46 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   addImage(File image) async {
-    // AuthController authController = Get.find();
-    // String name = Timestamp.now().millisecondsSinceEpoch.toString();
-    // String aaddress = await authController.uploadFile(image, "Chats/$name.jpg");
+    String name =
+        _MyUserUuid + Timestamp.now().millisecondsSinceEpoch.toString();
+    String aaddress =
+        await widget.controller.uploadFile(image, "ApptexChat/$name.jpg");
 
-    // var lastmsgTimeStamp = Timestamp.now();
-    // Map<String, dynamic> msginfoMap = {
-    //   "message": aaddress,
-    //   "sendBy": _MyUserUuid,
-    //   "CODE": "IMG",
-    //   "timestamp": lastmsgTimeStamp,
-    // };
-    // widget.controller.addMessageSend(msginfoMap, widget.fcm, widget.myName);
+    var lastmsgTimeStamp = Timestamp.now();
+    Map<String, dynamic> msginfoMap = {
+      "message": aaddress,
+      "sendBy": _MyUserUuid,
+      "CODE": "IMG",
+      "timestamp": lastmsgTimeStamp,
+    };
+    widget.controller.addMessageSend(msginfoMap, widget.fcm, widget.myName);
   }
 
-  myappbar() {
-    Size size = MediaQuery.of(context).size;
+  ScrollController textFieldScrollController = ScrollController();
+  static Future<File?> pickMedia_only() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 35,
+    );
+    if (pickedFile == null) return null;
+
+    return File(pickedFile.path);
+  }
+
+  typingArea(Size size) {
     return Container(
       width: size.width,
-      color: Colors.white24,
-      height: 52,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-            child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(3)),
-                child: Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ),
-          ),
-          Center(
-            child: Text(widget.title,
-                style: myStyle(16, true, color: Colors.grey.shade800)),
-          ),
-          const SizedBox(
-            width: 50,
-          )
-        ],
-      ),
-    );
-  }
-
-  typingArea() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      color: Colors.white,
       alignment: Alignment.bottomCenter,
       child: Row(
         children: [
           GestureDetector(
             onTap: () async {
-              // File? ss = await ImageController.pickMedia_only();
-              // if (ss != null) {
-              //   addImage(ss);
-              // }
+              File? ss = await pickMedia_only();
+              if (ss != null) {
+                addImage(ss);
+              }
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -244,6 +271,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 onChanged: (val) {
                   //  addMesage(false);
                 },
+                maxLines: 4,
+                minLines: 1,
+                scrollController: textFieldScrollController,
                 controller: txtMsg,
                 style: TextStyle(
                   color: Colors.grey.shade800,
@@ -334,8 +364,8 @@ class MessageBubble extends StatelessWidget {
               getdate()
             ],
           )),
-          if (isMine) ProfilePic(profileUrl, size: 30),
-          if (isMine) Container(width: 3),
+          //  if (isMine) ProfilePic(profileUrl, size: 30),
+          //if (isMine) Container(width: 3),
         ]);
   }
 
@@ -426,28 +456,48 @@ class ImageBubble extends StatelessWidget {
 }
 
 class ProfilePic extends StatelessWidget {
-  const ProfilePic(this.url, {this.size = 48, Key? key}) : super(key: key);
-  final String url;
+  ProfilePic(this.url, {this.size = 48, Key? key}) : super(key: key);
+  String url;
+
   final double size;
   @override
   Widget build(BuildContext context) {
+    url = url.length <= 7 ? "https://skysoltech.com/test.png" : url;
+    bool isNotUrl = url.length <= 7;
+
     double imsix = size;
     return ClipRRect(
       borderRadius: BorderRadius.circular(100),
-      child: Container(
-        width: imsix,
-        height: imsix,
-        color: Colors.grey.shade300,
-        child: Image(
-          image: NetworkImage(
-            url,
-          ),
-          alignment: Alignment.center,
-          height: double.infinity,
-          width: double.infinity,
-          fit: BoxFit.cover,
-        ),
-      ),
+      child: !isNotUrl
+          ? Container(
+              color: kprimary1,
+              width: imsix,
+              height: imsix,
+              padding: EdgeInsets.all(7),
+              child: Image(
+                image: NetworkImage(
+                  url,
+                ),
+                alignment: Alignment.center,
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            )
+          : Container(
+              width: imsix,
+              height: imsix,
+              color: Colors.grey.shade300,
+              child: Image(
+                image: NetworkImage(
+                  url,
+                ),
+                alignment: Alignment.center,
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
     );
   }
 }

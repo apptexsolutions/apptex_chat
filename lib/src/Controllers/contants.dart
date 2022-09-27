@@ -5,9 +5,11 @@ FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 String roomCollection = "Chatrooms";
 String chatMessagesCollection = "Messages";
 
-Color get kprimary1 => hexStringToColor("0B7592");
-Color get kprimary2 => hexStringToColor("f69c26");
-Color get kbackground => hexStringToColor("0F97BE");
+Color get kprimary1 => hexStringToColor("96abe0");
+Color get kprimary2 => hexStringToColor("E9F3FF");
+Color get kprimary3 => hexStringToColor("254DAF");
+Color get kprimary4 => hexStringToColor("525EFF");
+Color get kprimary5 => hexStringToColor("3B4CFF");
 
 Color hexStringToColor(String hexColor) {
   hexColor = hexColor.toUpperCase().replaceAll("#", "");

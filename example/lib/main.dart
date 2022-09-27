@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
 }
 
 class StartChat extends StatelessWidget {
-  String myUUID = "xxx2";
-  String otherUser = "xxx1";
+  String myUUID = "xxx1";
+  String otherUser = "xxx2";
 
   StartChat({Key? key}) : super(key: key) {
     AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);

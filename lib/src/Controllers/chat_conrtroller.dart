@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
 import 'package:apptex_chat/src/Screens/ChatScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -42,7 +45,6 @@ class ChatController extends GetxController {
         MaterialPageRoute(
             builder: (context) => ChatScreen(
                   controller: this,
-                  isSessionActive: true,
                   chatroomID: model.uid,
                   title: otherUser.name,
                   otherUserURl: otherUser.profileUrl,
@@ -51,6 +53,14 @@ class ChatController extends GetxController {
                   fcm: "fcm",
                   myName: mine.name,
                 )));
+  }
+
+  Future<String> uploadFile(File file, String serverPath) async {
+    Reference reference = FirebaseStorage.instance.ref().child(serverPath);
+    UploadTask uploadTask = reference.putFile(file);
+    TaskSnapshot snapshot = await uploadTask;
+    String url = await snapshot.ref.getDownloadURL();
+    return url;
   }
 
   Future addMessageSend(
