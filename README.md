@@ -80,3 +80,8 @@ More is about to Come:
 ## Frameworks Used
 1. Firebase Firestore
 2. Firebase Cloud storage
+
+
+## Contributor
+1. Sayed Muhammad Idrees
+2. Shah Raza 
