@@ -14,12 +14,14 @@ class ChatController extends GetxController {
   //FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   String roomUID;
 
-  ChatController(this.roomUID);
+  ChatController(this.roomUID) {
+    init();
+  }
 
   init() {
     chats.bindStream(firebaseFirestore
         .collection(roomCollection)
-        .doc("")
+        .doc(roomUID)
         .collection(chatMessagesCollection)
         .orderBy("timestamp", descending: true)
         .snapshots()

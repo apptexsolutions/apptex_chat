@@ -1,7 +1,7 @@
 name: apptex_chat
-description: A new Flutter package project.
+description: This Package is for making the chat system more easy and user friendly. and control chat features within one click.
 version: 1.0.0
-homepage:
+homepage: https://github.com/apptexsolutions/apptex_chat
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
