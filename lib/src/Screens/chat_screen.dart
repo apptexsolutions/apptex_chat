@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Screens/full_screen_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,6 +44,19 @@ class _ChatScreenState extends State<ChatScreen> {
   bool isTokenLoaded = false;
   TextEditingController txtMsg = TextEditingController();
   ScrollController scrollController = ScrollController();
+  bool isMaxScroll = false;
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels > 360 && !isMaxScroll) {
+        setState(() {
+          isMaxScroll = true;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -70,6 +84,36 @@ class _ChatScreenState extends State<ChatScreen> {
                     right: 0,
                     left: 0,
                     child: typingArea(size),
+                  ),
+                  Positioned(
+                    bottom: 80,
+                    right: 28,
+                    child: Visibility(
+                      visible: isMaxScroll,
+                      child: GestureDetector(
+                        onTap: () {
+                          _scrollToEnd();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: kprimary2,
+                          radius: 16,
+                          child: Icon(
+                            Icons.keyboard_double_arrow_down_sharp,
+                            size: 20,
+                            color: kprimary1,
+                          ),
+                          // width: 36,
+                          // height: 36,
+                          // padding: const EdgeInsets.all(8),
+                          // decoration: BoxDecoration(color: kprimary2, boxShadow: [
+                          //   BoxShadow(
+                          //       color: Colors.grey.shade300,
+                          //       blurRadius: 6,
+                          //       offset: const Offset(0, 2))
+                          // ]),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -118,8 +162,10 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  double paddingAnimation = 24;
+  double paddingAnimation = 8;
   bool showSendButton = false;
+  double containerHeight = 34;
+  double containerWidth = 34;
 
   Widget chatMessages() {
     return GetX<ChatController>(
@@ -209,7 +255,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   addMesage(bool sendClicked) async {
     if (txtMsg.text != "") {
-      String message = txtMsg.text;
+      String message = txtMsg.text.trim();
       var lastmsgTimeStamp = Timestamp.now();
       Map<String, dynamic> msginfoMap = {
         "message": message,
@@ -223,15 +269,22 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           txtMsg.text = "";
           showSendButton = false;
-          // scrollController.position
-          //     .setPixels(scrollController.position.maxScrollExtent);
-          scrollController.animateTo(scrollController.position.minScrollExtent,
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.decelerate);
-          // scrollController.jumpTo(scrollController.position.minScrollExtent);
+          _scrollToEnd();
         });
       }
     }
+  }
+
+  _scrollToEnd() {
+    scrollController
+        .animateTo(scrollController.position.minScrollExtent,
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.decelerate)
+        .then((value) {
+      setState(() {
+        isMaxScroll = false;
+      });
+    });
   }
 
   addImage(File image) async {
@@ -295,13 +348,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextField(
+                  cursorColor: kprimary1,
                   onChanged: (val) {
                     setState(() {
-                      if (val.isEmpty) {
-                        paddingAnimation = 24;
+                      if (val.trim().isEmpty) {
+                        paddingAnimation = 8;
                         showSendButton = false;
                       } else {
-                        paddingAnimation = 15;
+                        paddingAnimation = 12;
                         showSendButton = true;
                       }
                     });
@@ -341,11 +395,32 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   )
                 : GestureDetector(
-                    onTap: () {
-                      //TODO send Audio Message
+                    onLongPress: () {
+                      setState(() {
+                        containerHeight = 50;
+                        containerWidth = 50;
+                      });
                     },
-                    child: Container(
+                    onLongPressCancel: () {
+                      setState(() {
+                        containerHeight = 34;
+                        containerWidth = 34;
+                      });
+                    },
+                    onLongPressEnd: (d) {
+                      //TODO send message
+                      setState(() {
+                        containerHeight = 34;
+                        containerWidth = 34;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: Duration(
+                        milliseconds: 300,
+                      ),
                       padding: const EdgeInsets.all(5),
+                      height: containerHeight,
+                      width: containerWidth,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: kprimary1,
@@ -361,113 +436,6 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
-  // typingArea(Size size) {
-  //   return Container(
-  //     width: size.width,
-  //     padding: const EdgeInsets.symmetric(vertical: 10),
-  //     color: Colors.red,
-  //     alignment: Alignment.bottomCenter,
-  //     child: Row(
-  //       children: [
-  //         GestureDetector(
-  //           onTap: () async {
-  //             File? ss = await pickMedia_only();
-  //             if (ss != null) {
-  //               addImage(ss);
-  //             }
-  //           },
-  //           child: Container(
-  //             padding: const EdgeInsets.symmetric(horizontal: 6),
-  //             child: Icon(
-  //               Icons.attach_file,
-  //               color: Colors.grey.shade600,
-  //               size: 27,
-  //             ),
-  //           ),
-  //         ),
-  //         Expanded(
-  //           child: Container(
-  //             padding: const EdgeInsets.only(
-  //               left: 15,
-  //               top: 2,
-  //               bottom: 2,
-  //             ),
-  //             margin: const EdgeInsets.only(right: 20),
-  //             decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.circular(8),
-  //               color: Colors.grey[350],
-  //             ),
-  //             child: TextField(
-  //               onChanged: (val) {
-  //                 //  addMesage(false);
-
-  //                 setState(() {
-  //                   if (val.isEmpty) {
-  //                     paddingAnimation = 24;
-  //                     showSendButton = false;
-  //                   } else {
-  //                     paddingAnimation = 15;
-  //                     showSendButton = true;
-  //                   }
-  //                 });
-  //               },
-  //               maxLines: 4,
-  //               minLines: 1,
-  //               scrollController: textFieldScrollController,
-  //               controller: txtMsg,
-  //               style: TextStyle(
-  //                 color: Colors.grey.shade800,
-  //                 fontWeight: FontWeight.w600,
-  //               ),
-  //               decoration: InputDecoration(
-  //                   hintText: "Send a message..",
-  //                   suffixIcon: showSendButton
-  //                       ? GestureDetector(
-  //                           onTap: () {
-  //                             addMesage(true);
-  //                           },
-  //                           child: Container(
-  //                             margin: const EdgeInsets.all(5),
-  //                             decoration: BoxDecoration(
-  //                               shape: BoxShape.circle,
-  //                               color: kprimary1,
-  //                             ),
-  //                             child: const Icon(
-  //                               Icons.send,
-  //                               color: Colors.white,
-  //                               size: 27,
-  //                             ),
-  //                           ),
-  //                         )
-  //                       : GestureDetector(
-  //                           onTap: () {
-  //                             //TODO send Audio Message
-  //                           },
-  //                           child: Container(
-  //                             margin: const EdgeInsets.all(5),
-  //                             decoration: BoxDecoration(
-  //                               shape: BoxShape.circle,
-  //                               color: kprimary1,
-  //                             ),
-  //                             child: const Icon(
-  //                               Icons.mic,
-  //                               color: Colors.white,
-  //                               size: 27,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                   hintStyle:
-  //                       TextStyle(color: Colors.grey.shade600.withOpacity(0.7)),
-  //                   border: InputBorder.none),
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
 }
 
 class MessageBubble extends StatelessWidget {
@@ -481,7 +449,7 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double radius = 34;
+    double radius = 16;
     return Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment:
@@ -496,20 +464,18 @@ class MessageBubble extends StatelessWidget {
                 minWidth: 50,
                 maxWidth: MediaQuery.of(context).size.width * 0.6),
             margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             decoration: BoxDecoration(
               color: isMine ? kprimary1 : kprimary2,
               borderRadius: BorderRadius.only(
-                topLeft: isMine
-                    ? Radius.circular(radius)
-                    : Radius.circular(radius / 2),
+                topLeft:
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
                 bottomLeft:
                     isMine ? Radius.circular(radius) : const Radius.circular(0),
                 bottomRight:
                     isMine ? const Radius.circular(0) : Radius.circular(radius),
-                topRight: isMine
-                    ? Radius.circular(radius / 2)
-                    : Radius.circular(radius),
+                topRight:
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
               ),
             ),
             child: Text(
