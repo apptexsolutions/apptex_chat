@@ -4,12 +4,38 @@ import 'package:flutter/material.dart';
 FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 String roomCollection = "Chatrooms";
 String chatMessagesCollection = "Messages";
+const Map<int, String> weekdayName = {
+  1: "Monday",
+  2: "Tuesday",
+  3: "Wednesday",
+  4: "Thursday",
+  5: "Friday",
+  6: "Saturday",
+  7: "Sunday"
+};
 
-Color get kprimary1 => hexStringToColor("96abe0");
-Color get kprimary2 => hexStringToColor("E9F3FF");
-Color get kprimary3 => hexStringToColor("254DAF");
+List months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];
+
+//print(weekdayName[DateTime.now().weekday]);
+Color get kprimary1 => hexStringToColor("dc5b5f"); // main
+Color get kprimary2 => hexStringToColor("e8eaed"); // grey Bubble
+Color get kprimary3 => hexStringToColor("d0d9e3"); // grey time
 Color get kprimary4 => hexStringToColor("525EFF");
-Color get kprimary5 => hexStringToColor("3B4CFF");
+Color get kprimary5 => hexStringToColor("142f58"); // used for heading
+Color get kWhite => hexStringToColor("ffffff");
 
 Color hexStringToColor(String hexColor) {
   hexColor = hexColor.toUpperCase().replaceAll("#", "");
@@ -37,23 +63,11 @@ getChatDate(DateTime msgDate) {
       msgDate.month == DateTime.now().month &&
       msgDate.day == DateTime.now().day) {
     int hour = msgDate.hour > 12 ? msgDate.hour - 12 : msgDate.hour;
-    String amCode = msgDate.hour > 12 ? "PM" : "AM";
-    date = "$hour:${msgDate.minute} $amCode";
+
+    String amCode = msgDate.hour >= 12 ? "PM" : "AM";
+    date =
+        "${hour < 10 ? '0$hour' : hour}:${msgDate.minute < 10 ? "0${msgDate.minute}" : msgDate.minute} $amCode";
   } else {
-    List months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
     date = msgDate.day.toString() +
         "-" +
         months[msgDate.month -

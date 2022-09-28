@@ -56,8 +56,12 @@ class StartChat extends StatelessWidget {
               onTap: () {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
+
                 AppTexChat.startChat(context,
-                    receiver_name: "Sayed idrees", receiver_id: otherUser);
+                    receiver_name: "Sayed idrees",
+                    receiver_id: otherUser,
+                    receiver_profileUrl:
+                        "https://p16-sign-sg.tiktokcdn.com/aweme/720x720/tiktok-obj/72ee4a61560c943694ae95506d65d325.jpeg?x-expires=1664506800&x-signature=xciRzWJq2X7EfBZGUXIsio%2FQmDw%3D");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',
@@ -71,7 +75,7 @@ class StartChat extends StatelessWidget {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
                 AppTexChat.startChat(context,
-                    receiver_name: "Sayed idrees", receiver_id: otherUser);
+                    receiver_name: "Jamshed", receiver_id: otherUser);
               },
               buttonColor: Colors.green,
               buttonName: 'Open My Chats',

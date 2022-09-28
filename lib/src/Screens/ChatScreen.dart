@@ -46,21 +46,21 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
+    double curve = 0;
     return Scaffold(
-      backgroundColor: kprimary1,
+      backgroundColor: kWhite,
       appBar: myappbar(size, context),
       body: Stack(
         children: [
           Positioned(
             bottom: 0,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      topRight: Radius.circular(50))),
-              height: size.height * 0.87,
+                      topLeft: Radius.circular(curve),
+                      topRight: Radius.circular(curve))),
+              height: size.height * 0.874,
               width: size.width,
               child: Stack(
                 children: [
@@ -82,12 +82,14 @@ class _ChatScreenState extends State<ChatScreen> {
   AppBar myappbar(Size size, BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: kprimary1,
+      backgroundColor: kWhite,
       centerTitle: false,
       automaticallyImplyLeading: false,
       title: Container(
         width: size.width,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
               onTap: () {
@@ -102,34 +104,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            ProfilePic(
-              widget.myUID,
-              size: 40,
+            Container(
+              padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+              child: Text(widget.title.toUpperCase(),
+                  style: TextStyle(
+                      color: kprimary5,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700)),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                  child: Text(widget.title,
-                      style: TextStyle(
-                          color: kprimary2,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600)),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                  child: const Text(
-                    "",
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 89, 108, 149),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            )
+            ProfilePic(
+              widget.otherUserURl,
+              size: 30,
+            ),
           ],
         ),
       ),
@@ -170,19 +156,28 @@ class _ChatScreenState extends State<ChatScreen> {
                                     .toDate()
                                     .day)
                           Container(
-                            padding: const EdgeInsets.all(5),
-                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 4),
+                            margin: const EdgeInsets.only(top: 20, bottom: 10),
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Text(
-                              controller.chats[index - 1].timestamp
-                                  .toDate()
-                                  .toString()
-                                  .split(" ")[0],
-                              style: TextStyle(
-                                color: Colors.grey[600],
+                                color: kWhite,
+                                borderRadius: BorderRadius.circular(60),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2))
+                                ]),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                getMessageReferecneTime(controller
+                                    .chats[index - 1].timestamp
+                                    .toDate()),
+                                style: TextStyle(
+                                    color: kprimary1,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -228,7 +223,10 @@ class _ChatScreenState extends State<ChatScreen> {
       widget.controller.addMessageSend(msginfoMap, widget.fcm, widget.myName);
 
       if (sendClicked) {
-        txtMsg.text = "";
+        setState(() {
+          txtMsg.text = "";
+          showSendButton = false;
+        });
       }
     }
   }
@@ -365,6 +363,33 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  int daysBetween(DateTime from, DateTime to) {
+    from = DateTime(from.year, from.month, from.day);
+    to = DateTime(to.year, to.month, to.day);
+    return (to.difference(from).inHours / 24).round();
+  }
+
+  String getMessageReferecneTime(DateTime date) {
+    //return weekdayName[date.weekday].toString();
+    var now = DateTime.now();
+    int days = daysBetween(date, now);
+    print(date.toString() + "__" + days.toString());
+    if (days < 1) {
+      return "Today";
+    } else if (days < 2) {
+      return "Yesterday";
+    } else if (days <= 7) {
+      return weekdayName[date.weekday].toString();
+    } else {
+      String sdate = months[date.month - 1] +
+          " " +
+          date.day.toString() +
+          ", " +
+          date.year.toString(); //
+      return sdate;
+    }
+  }
 }
 
 class MessageBubble extends StatelessWidget {
@@ -393,20 +418,20 @@ class MessageBubble extends StatelessWidget {
                 minWidth: 50,
                 maxWidth: MediaQuery.of(context).size.width * 0.6),
             margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-            //padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
-
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
             decoration: BoxDecoration(
               color: isMine ? Colors.grey.shade200 : kprimary2,
               borderRadius: BorderRadius.only(
-                topLeft:
-                    isMine ? Radius.circular(radius) : const Radius.circular(0),
+                topLeft: isMine
+                    ? Radius.circular(radius)
+                    : Radius.circular(radius / 2),
                 bottomLeft:
-                    isMine ? Radius.circular(radius) : Radius.circular(radius),
+                    isMine ? Radius.circular(radius) : Radius.circular(0),
                 bottomRight:
-                    isMine ? Radius.circular(radius) : Radius.circular(radius),
-                topRight:
-                    isMine ? const Radius.circular(0) : Radius.circular(radius),
+                    isMine ? Radius.circular(0) : Radius.circular(radius),
+                topRight: isMine
+                    ? Radius.circular(radius / 2)
+                    : Radius.circular(radius),
               ),
             ),
             child: Text(
@@ -511,28 +536,21 @@ class ProfilePic extends StatelessWidget {
   final double size;
   @override
   Widget build(BuildContext context) {
-    url = url.length <= 7 ? "https://skysoltech.com/test.png" : url;
+    url = url.length <= 7 ? "" : url;
     bool isNotUrl = url.length <= 7;
 
     double imsix = size;
     return ClipRRect(
       borderRadius: BorderRadius.circular(100),
-      child: !isNotUrl
+      child: isNotUrl
           ? Container(
               color: kprimary1,
               width: imsix,
               height: imsix,
-              padding: const EdgeInsets.all(7),
-              child: Image(
-                image: NetworkImage(
-                  url,
-                ),
-                alignment: Alignment.center,
-                height: double.infinity,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            )
+              child: const Icon(
+                Icons.person,
+                size: 20,
+              ))
           : Container(
               width: imsix,
               height: imsix,
