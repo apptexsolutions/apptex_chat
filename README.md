@@ -14,7 +14,7 @@ and the Flutter guide for
 This Package will give you a unique and pre-designed chatting system based on Firebase Firestore and Firebase Cloud.  It also has Push Notifications and a Custom Editable theme for both screens, such as Home Screen and Chat Screen.
 
 Home Screen : 
-It has all the Users which are recently contacted. 
+It has all the Users which are recently contacted..
 
 Chat Screen : 
 Ofcourse, a chat screen to chat. No explaination needed but, Yes you can change colors and themes
