@@ -225,8 +225,10 @@ class _ChatScreenState extends State<ChatScreen> {
           showSendButton = false;
           // scrollController.position
           //     .setPixels(scrollController.position.maxScrollExtent);
-
-          scrollController.jumpTo(scrollController.position.minScrollExtent);
+          scrollController.animateTo(scrollController.position.minScrollExtent,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.decelerate);
+          // scrollController.jumpTo(scrollController.position.minScrollExtent);
         });
       }
     }

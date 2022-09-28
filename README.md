@@ -106,7 +106,7 @@ More is about to Come:
 <table>
   <tr>
     <td align="center"><a href="https://github.com/XeroDays"><img src="https://avatars.githubusercontent.com/u/38852291?v=4" width="100px;" alt=""/><br /><sub><b>Sayed Muhammad Idrees</b></sub></a><br />
-    <a href="https://github.com/XeroDays" title="Code">💻</a> <a href="#design-Sayed-idrees" title="Design">🎨</a></td>
+    <a href="https://github.com/XeroDays" title="Code">💻</a> <a href="https://github.com/XeroDays" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/ShahSomething"><img src="https://avatars.githubusercontent.com/u/63047096?v=4" width="100px;" alt=""/><br /><sub><b>Shah Raza</b></sub></a><br /><a href="https://github.com/ShahSomething" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/mrcse"><img src="https://avatars.githubusercontent.com/u/73348512?v=4" width="100px;" alt=""/><br /><sub><b>Jamshid Ali</b></sub></a><br /><a href="https://github.com/mrcse" title="Code">💻</a></td>
   </tr>
