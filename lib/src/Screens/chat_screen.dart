@@ -1,9 +1,9 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, use_key_in_widget_constructors, no_logic_in_create_state
+// ignore_for_file: prefer_const_constructors_in_immutables, use_key_in_widget_constructors, no_logic_in_create_state, non_constant_identifier_names
 
 import 'dart:io';
 
 import 'package:apptex_chat/src/Models/MessageModel.dart';
-import 'package:apptex_chat/src/Screens/FullScreenImage.dart';
+import 'package:apptex_chat/src/Screens/full_screen_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -42,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
   _ChatScreenState(this._MyUserUuid);
   bool isTokenLoaded = false;
   TextEditingController txtMsg = TextEditingController();
-
+  ScrollController scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -67,6 +67,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   Positioned.fill(child: chatMessages()),
                   Positioned(
                     bottom: 0,
+                    right: 0,
+                    left: 0,
                     child: typingArea(size),
                   ),
                 ],
@@ -85,37 +87,31 @@ class _ChatScreenState extends State<ChatScreen> {
       backgroundColor: kWhite,
       centerTitle: false,
       automaticallyImplyLeading: false,
-      title: Container(
+      title: SizedBox(
         width: size.width,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Colors.grey.shade800,
-                  size: 22,
-                ),
-              ),
-            ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.grey.shade800,
+                      size: 22,
+                    ))),
             Container(
-              padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(widget.title.toUpperCase(),
-                  style: TextStyle(
-                      color: kprimary5,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700)),
-            ),
-            ProfilePic(
-              widget.otherUserURl,
-              size: 30,
-            ),
+                padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                child: Text(widget.title.toUpperCase(),
+                    style: TextStyle(
+                        color: kprimary5,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700))),
+            ProfilePic(widget.otherUserURl, size: 30),
           ],
         ),
       ),
@@ -141,6 +137,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   left: paddingAnimation, right: paddingAnimation, bottom: 15),
               duration: const Duration(seconds: 1, milliseconds: 200),
               child: ListView.builder(
+                  controller: scrollController,
                   padding: const EdgeInsets.only(bottom: 60, top: 8),
                   itemCount: controller.chats.length,
                   reverse: true,
@@ -226,6 +223,10 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           txtMsg.text = "";
           showSendButton = false;
+          // scrollController.position
+          //     .setPixels(scrollController.position.maxScrollExtent);
+
+          scrollController.jumpTo(scrollController.position.minScrollExtent);
         });
       }
     }
@@ -261,135 +262,210 @@ class _ChatScreenState extends State<ChatScreen> {
   typingArea(Size size) {
     return Container(
       width: size.width,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      color: Colors.white,
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      decoration: BoxDecoration(
+          color: Colors.grey.shade200, borderRadius: BorderRadius.circular(50)),
       alignment: Alignment.bottomCenter,
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () async {
-              File? ss = await pickMedia_only();
-              if (ss != null) {
-                addImage(ss);
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: Icon(
-                Icons.attach_file,
-                color: Colors.grey.shade600,
-                size: 27,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.only(
-                left: 15,
-                top: 2,
-                bottom: 2,
-              ),
-              margin: const EdgeInsets.only(right: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[350],
-              ),
-              child: TextField(
-                onChanged: (val) {
-                  //  addMesage(false);
-
-                  setState(() {
-                    if (val.length == 0) {
-                      paddingAnimation = 24;
-                      showSendButton = false;
-                    } else {
-                      paddingAnimation = 15;
-                      showSendButton = true;
-                    }
-                  });
-                },
-                maxLines: 4,
-                minLines: 1,
-                scrollController: textFieldScrollController,
-                controller: txtMsg,
-                style: TextStyle(
-                  color: Colors.grey.shade800,
-                  fontWeight: FontWeight.w600,
+      child: Container(
+        margin: EdgeInsets.all(6),
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () async {
+                File? ss = await pickMedia_only();
+                if (ss != null) {
+                  addImage(ss);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: Icon(
+                  Icons.attach_file,
+                  color: Colors.grey.shade600,
+                  size: 27,
                 ),
-                decoration: InputDecoration(
-                    hintText: "Send a message..",
-                    suffixIcon: showSendButton
-                        ? GestureDetector(
-                            onTap: () {
-                              addMesage(true);
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: kprimary1,
-                              ),
-                              child: const Icon(
-                                Icons.send,
-                                color: Colors.white,
-                                size: 27,
-                              ),
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () {
-                              //TODO send Audio Message
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: kprimary1,
-                              ),
-                              child: const Icon(
-                                Icons.mic,
-                                color: Colors.white,
-                                size: 27,
-                              ),
-                            ),
-                          ),
-                    hintStyle:
-                        TextStyle(color: Colors.grey.shade600.withOpacity(0.7)),
-                    border: InputBorder.none),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: TextField(
+                  onChanged: (val) {
+                    setState(() {
+                      if (val.isEmpty) {
+                        paddingAnimation = 24;
+                        showSendButton = false;
+                      } else {
+                        paddingAnimation = 15;
+                        showSendButton = true;
+                      }
+                    });
+                  },
+                  maxLines: 4,
+                  minLines: 1,
+                  scrollController: textFieldScrollController,
+                  controller: txtMsg,
+                  style: TextStyle(
+                    color: Colors.grey.shade800,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  decoration: InputDecoration(
+                      hintText: "Send a message..",
+                      hintStyle: TextStyle(
+                          color: Colors.grey.shade600.withOpacity(0.7)),
+                      border: InputBorder.none),
+                ),
+              ),
+            ),
+            showSendButton
+                ? GestureDetector(
+                    onTap: () {
+                      addMesage(true);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: kprimary1,
+                      ),
+                      child: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      //TODO send Audio Message
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: kprimary1,
+                      ),
+                      child: const Icon(
+                        Icons.mic,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+          ],
+        ),
       ),
     );
   }
 
-  int daysBetween(DateTime from, DateTime to) {
-    from = DateTime(from.year, from.month, from.day);
-    to = DateTime(to.year, to.month, to.day);
-    return (to.difference(from).inHours / 24).round();
-  }
+  // typingArea(Size size) {
+  //   return Container(
+  //     width: size.width,
+  //     padding: const EdgeInsets.symmetric(vertical: 10),
+  //     color: Colors.red,
+  //     alignment: Alignment.bottomCenter,
+  //     child: Row(
+  //       children: [
+  //         GestureDetector(
+  //           onTap: () async {
+  //             File? ss = await pickMedia_only();
+  //             if (ss != null) {
+  //               addImage(ss);
+  //             }
+  //           },
+  //           child: Container(
+  //             padding: const EdgeInsets.symmetric(horizontal: 6),
+  //             child: Icon(
+  //               Icons.attach_file,
+  //               color: Colors.grey.shade600,
+  //               size: 27,
+  //             ),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: Container(
+  //             padding: const EdgeInsets.only(
+  //               left: 15,
+  //               top: 2,
+  //               bottom: 2,
+  //             ),
+  //             margin: const EdgeInsets.only(right: 20),
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(8),
+  //               color: Colors.grey[350],
+  //             ),
+  //             child: TextField(
+  //               onChanged: (val) {
+  //                 //  addMesage(false);
 
-  String getMessageReferecneTime(DateTime date) {
-    //return weekdayName[date.weekday].toString();
-    var now = DateTime.now();
-    int days = daysBetween(date, now);
-    print(date.toString() + "__" + days.toString());
-    if (days < 1) {
-      return "Today";
-    } else if (days < 2) {
-      return "Yesterday";
-    } else if (days <= 7) {
-      return weekdayName[date.weekday].toString();
-    } else {
-      String sdate = months[date.month - 1] +
-          " " +
-          date.day.toString() +
-          ", " +
-          date.year.toString(); //
-      return sdate;
-    }
-  }
+  //                 setState(() {
+  //                   if (val.isEmpty) {
+  //                     paddingAnimation = 24;
+  //                     showSendButton = false;
+  //                   } else {
+  //                     paddingAnimation = 15;
+  //                     showSendButton = true;
+  //                   }
+  //                 });
+  //               },
+  //               maxLines: 4,
+  //               minLines: 1,
+  //               scrollController: textFieldScrollController,
+  //               controller: txtMsg,
+  //               style: TextStyle(
+  //                 color: Colors.grey.shade800,
+  //                 fontWeight: FontWeight.w600,
+  //               ),
+  //               decoration: InputDecoration(
+  //                   hintText: "Send a message..",
+  //                   suffixIcon: showSendButton
+  //                       ? GestureDetector(
+  //                           onTap: () {
+  //                             addMesage(true);
+  //                           },
+  //                           child: Container(
+  //                             margin: const EdgeInsets.all(5),
+  //                             decoration: BoxDecoration(
+  //                               shape: BoxShape.circle,
+  //                               color: kprimary1,
+  //                             ),
+  //                             child: const Icon(
+  //                               Icons.send,
+  //                               color: Colors.white,
+  //                               size: 27,
+  //                             ),
+  //                           ),
+  //                         )
+  //                       : GestureDetector(
+  //                           onTap: () {
+  //                             //TODO send Audio Message
+  //                           },
+  //                           child: Container(
+  //                             margin: const EdgeInsets.all(5),
+  //                             decoration: BoxDecoration(
+  //                               shape: BoxShape.circle,
+  //                               color: kprimary1,
+  //                             ),
+  //                             child: const Icon(
+  //                               Icons.mic,
+  //                               color: Colors.white,
+  //                               size: 27,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                   hintStyle:
+  //                       TextStyle(color: Colors.grey.shade600.withOpacity(0.7)),
+  //                   border: InputBorder.none),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
 }
 
 class MessageBubble extends StatelessWidget {
@@ -409,9 +485,9 @@ class MessageBubble extends StatelessWidget {
         mainAxisAlignment:
             isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (isMine) getdate(msgDate),
           if (!isMine) Container(width: 3),
-          if (!isMine) ProfilePic(profileUrl, size: 30),
+          if (isMine) getdate(msgDate),
+          if (!isMine) ProfilePic(profileUrl, size: 26),
           IntrinsicWidth(
               child: Container(
             constraints: BoxConstraints(
@@ -420,15 +496,15 @@ class MessageBubble extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
             decoration: BoxDecoration(
-              color: isMine ? Colors.grey.shade200 : kprimary2,
+              color: isMine ? kprimary1 : kprimary2,
               borderRadius: BorderRadius.only(
                 topLeft: isMine
                     ? Radius.circular(radius)
                     : Radius.circular(radius / 2),
                 bottomLeft:
-                    isMine ? Radius.circular(radius) : Radius.circular(0),
+                    isMine ? Radius.circular(radius) : const Radius.circular(0),
                 bottomRight:
-                    isMine ? Radius.circular(0) : Radius.circular(radius),
+                    isMine ? const Radius.circular(0) : Radius.circular(radius),
                 topRight: isMine
                     ? Radius.circular(radius / 2)
                     : Radius.circular(radius),
@@ -437,7 +513,7 @@ class MessageBubble extends StatelessWidget {
             child: Text(
               message,
               style: TextStyle(
-                  color: Colors.grey.shade800,
+                  color: isMine ? kWhite : Colors.grey.shade800,
                   fontWeight: FontWeight.w500,
                   fontSize: 13),
             ),
@@ -529,6 +605,7 @@ class ImageBubble extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class ProfilePic extends StatelessWidget {
   ProfilePic(this.url, {this.size = 48, Key? key}) : super(key: key);
   String url;

@@ -40,7 +40,12 @@ First you have to execute this line of code at the begining of the project where
 
 ## Usage
 
-**Step 1 : Initialize AppTexChat**
+**Step 1 : Firebase Configuration**
+ 1. Install Firebase in your project
+ 2. Download firebase.json and firebase.infoplist file for your project from firebase.
+ 3. Inilize firebase in the main function.
+
+**Step 2 : Initialize AppTexChat**
  ```dart
 // here the Full name os the current USer Full name
 //and the uuid is the Firebase UID for that user.
@@ -48,7 +53,7 @@ AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
 ```
 
 
-**Step 2 : Start Chat with some user**
+**Step 3 : Start Chat with some user**
 
 1. Just Call this function
 2. Boom! That's it. Chat Started.
@@ -67,6 +72,17 @@ AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
 
 
 
+
+
+## Features Status
+1. Chating ✅ 
+2. Voice recording 🚫
+3. Images ✅ 
+4. Videos 🚫
+5. Document 🚫
+6. Location 🚫
+
+
 ## Additional information
 
 More is about to Come:
@@ -82,6 +98,16 @@ More is about to Come:
 2. Firebase Cloud storage
 
 
-## Contributor
-1. Sayed Muhammad Idrees
-2. Shah Raza 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/XeroDays"><img src="https://avatars.githubusercontent.com/u/38852291?v=4" width="100px;" alt=""/><br /><sub><b>Sayed Muhammad Idrees</b></sub></a><br />
+    <a href="https://github.com/XeroDays" title="Code">💻</a> <a href="#design-Sayed-idrees" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/ShahSomething"><img src="https://avatars.githubusercontent.com/u/63047096?v=4" width="100px;" alt=""/><br /><sub><b>Shah Raza</b></sub></a><br /><a href="https://github.com/ShahSomething" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mrcse"><img src="https://avatars.githubusercontent.com/u/73348512?v=4" width="100px;" alt=""/><br /><sub><b>Jamshid Ali</b></sub></a><br /><a href="https://github.com/mrcse" title="Code">💻</a></td>
+  </tr>
+</table>

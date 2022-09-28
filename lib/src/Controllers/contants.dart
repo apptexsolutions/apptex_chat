@@ -56,6 +56,33 @@ String formatDate(DateTime date) {
   return "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}  ";
 }
 
+String getMessageReferecneTime(DateTime date) {
+  //return weekdayName[date.weekday].toString();
+  var now = DateTime.now();
+  int days = daysBetween(date, now);
+
+  if (days < 1) {
+    return "Today";
+  } else if (days < 2) {
+    return "Yesterday";
+  } else if (days <= 7) {
+    return weekdayName[date.weekday].toString();
+  } else {
+    String sdate = months[date.month - 1] +
+        " " +
+        date.day.toString() +
+        ", " +
+        date.year.toString(); //
+    return sdate;
+  }
+}
+
+int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(from.year, from.month, from.day);
+  to = DateTime(to.year, to.month, to.day);
+  return (to.difference(from).inHours / 24).round();
+}
+
 getChatDate(DateTime msgDate) {
   String date = "";
 
@@ -68,10 +95,7 @@ getChatDate(DateTime msgDate) {
     date =
         "${hour < 10 ? '0$hour' : hour}:${msgDate.minute < 10 ? "0${msgDate.minute}" : msgDate.minute} $amCode";
   } else {
-    date = msgDate.day.toString() +
-        "-" +
-        months[msgDate.month -
-            1]; //          " ${msgDate.hour}:${msgDate.minute}";
+    date = msgDate.day.toString() + "-" + months[msgDate.month - 1];
   }
 
   return date;

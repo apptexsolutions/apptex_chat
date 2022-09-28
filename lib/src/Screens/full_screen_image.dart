@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:apptex_chat/src/Controllers/contants.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
+
 import 'package:flutter/material.dart';
 
 class FullScreenImage extends StatelessWidget {

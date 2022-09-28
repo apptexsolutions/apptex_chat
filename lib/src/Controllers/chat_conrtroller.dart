@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
-import 'package:apptex_chat/src/Screens/ChatScreen.dart';
+import 'package:apptex_chat/src/Screens/chat_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
