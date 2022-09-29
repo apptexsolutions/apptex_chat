@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../Models/MessageModel.dart';
 
@@ -17,11 +18,29 @@ class ChatController extends GetxController {
   //FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   String roomUID;
 
+  RxBool isTokenLoaded = false.obs;
+  TextEditingController txtMsg = TextEditingController();
+  ScrollController scrollController = ScrollController();
+  ScrollController textFieldScrollController = ScrollController();
+  RxBool isMaxScroll = false.obs;
+  RxBool showPadding = false.obs;
+  RxBool showSendButton = false.obs;
+  RxBool micButtonPressed = false.obs;
+  RxBool isSuccessful = false.obs;
+
   ChatController(this.roomUID) {
-    init();
+    // init();
   }
 
-  init() {
+  @override
+  void onInit() {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels > 360 && !isMaxScroll.value) {
+        isMaxScroll.value = true;
+      } else if (scrollController.position.pixels < 360 && isMaxScroll.value) {
+        isMaxScroll.value = false;
+      }
+    });
     chats.bindStream(firebaseFirestore
         .collection(roomCollection)
         .doc(roomUID)
@@ -32,6 +51,7 @@ class ChatController extends GetxController {
       var s = event.docs.map((e) => MessageModel.fromSnapshot(e)).toList();
       return s;
     }));
+    super.onInit();
   }
 
   startChat(BuildContext context, ChatModel model, String myUID) async {
@@ -44,7 +64,7 @@ class ChatController extends GetxController {
         context,
         MaterialPageRoute(
             builder: (context) => ChatScreen(
-                  controller: this,
+                  chatController: this,
                   chatroomID: model.uid,
                   title: otherUser.name,
                   otherUserURl: otherUser.profileUrl,
@@ -93,5 +113,25 @@ class ChatController extends GetxController {
 
       return value;
     });
+  }
+
+  scrollToEnd() {
+    scrollController
+        .animateTo(scrollController.position.minScrollExtent,
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.decelerate)
+        .then((value) {
+      isMaxScroll.value = false;
+    });
+  }
+
+  Future<File?> pickMedia_only() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 35,
+    );
+    if (pickedFile == null) return null;
+
+    return File(pickedFile.path);
   }
 }
