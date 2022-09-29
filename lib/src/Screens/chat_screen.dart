@@ -88,32 +88,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Positioned(
                     bottom: 80,
                     right: 28,
-                    child: Visibility(
-                      visible: isMaxScroll,
-                      child: GestureDetector(
-                        onTap: () {
-                          _scrollToEnd();
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: kprimary2,
-                          radius: 16,
-                          child: Icon(
-                            Icons.keyboard_double_arrow_down_sharp,
-                            size: 20,
-                            color: kprimary1,
-                          ),
-                          // width: 36,
-                          // height: 36,
-                          // padding: const EdgeInsets.all(8),
-                          // decoration: BoxDecoration(color: kprimary2, boxShadow: [
-                          //   BoxShadow(
-                          //       color: Colors.grey.shade300,
-                          //       blurRadius: 6,
-                          //       offset: const Offset(0, 2))
-                          // ]),
-                        ),
-                      ),
-                    ),
+                    child: scrol_button(),
                   ),
                 ],
               ),
@@ -121,6 +96,35 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           // Positioned(top: 0, child: myappbar()),
         ],
+      ),
+    );
+  }
+
+  Visibility scrol_button() {
+    return Visibility(
+      visible: isMaxScroll,
+      child: GestureDetector(
+        onTap: () {
+          _scrollToEnd();
+        },
+        child: CircleAvatar(
+          backgroundColor: kprimary2,
+          radius: 16,
+          child: Icon(
+            Icons.keyboard_double_arrow_down_sharp,
+            size: 20,
+            color: kprimary1,
+          ),
+          // width: 36,
+          // height: 36,
+          // padding: const EdgeInsets.all(8),
+          // decoration: BoxDecoration(color: kprimary2, boxShadow: [
+          //   BoxShadow(
+          //       color: Colors.grey.shade300,
+          //       blurRadius: 6,
+          //       offset: const Offset(0, 2))
+          // ]),
+        ),
       ),
     );
   }
