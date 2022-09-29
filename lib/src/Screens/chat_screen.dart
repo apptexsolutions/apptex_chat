@@ -5,26 +5,23 @@ import 'dart:io';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Screens/full_screen_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../Controllers/chat_conrtroller.dart';
 import '../Controllers/contants.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends StatelessWidget {
   final String chatroomID;
-
   final String title;
   final String userProfile;
   final String otherUserURl;
-  final ChatController controller;
+  final ChatController chatController;
   final String myUID;
   final String fcm;
   final String myName;
   ChatScreen(
-      {required this.controller,
+      {required this.chatController,
       required this.chatroomID,
       required this.title,
       required this.userProfile,
@@ -32,30 +29,6 @@ class ChatScreen extends StatefulWidget {
       required this.myUID,
       required this.fcm,
       required this.myName});
-
-  @override
-  _ChatScreenState createState() => _ChatScreenState(myUID);
-}
-
-class _ChatScreenState extends State<ChatScreen> {
-  final String _MyUserUuid;
-
-  _ChatScreenState(this._MyUserUuid);
-  bool isTokenLoaded = false;
-  TextEditingController txtMsg = TextEditingController();
-  ScrollController scrollController = ScrollController();
-  bool isMaxScroll = false;
-  @override
-  void initState() {
-    super.initState();
-    scrollController.addListener(() {
-      if (scrollController.position.pixels > 360 && !isMaxScroll) {
-        setState(() {
-          isMaxScroll = true;
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,21 +49,35 @@ class _ChatScreenState extends State<ChatScreen> {
                       topRight: Radius.circular(curve))),
               height: size.height * 0.874,
               width: size.width,
-              child: Stack(
-                children: [
-                  Positioned.fill(child: chatMessages()),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    left: 0,
-                    child: typingArea(size),
-                  ),
-                  Positioned(
-                    bottom: 80,
-                    right: 28,
-                    child: scrol_button(),
-                  ),
-                ],
+              child: Obx(
+                () => Stack(
+                  children: [
+                    Positioned.fill(child: chatMessages()),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: typingArea(size),
+                    ),
+                    Positioned(
+                      bottom: 80,
+                      right: 28,
+                      child: scrol_button(),
+                    ),
+                    if (chatController.micButtonPressed.value)
+                      const Positioned(
+                        right: 80,
+                        bottom: 30,
+                        child: Text('< Slide to cancel'),
+                      ),
+                    if (chatController.micButtonPressed.value)
+                      Positioned(
+                        right: 20,
+                        bottom: 22,
+                        child: lockContainer(),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -100,30 +87,87 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Visibility scrol_button() {
-    return Visibility(
-      visible: isMaxScroll,
-      child: GestureDetector(
-        onTap: () {
-          _scrollToEnd();
-        },
-        child: CircleAvatar(
-          backgroundColor: kprimary2,
-          radius: 16,
-          child: Icon(
-            Icons.keyboard_double_arrow_down_sharp,
-            size: 20,
-            color: kprimary1,
+  Container lockContainer() {
+    return Container(
+      height: 160,
+      width: 50,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Column(
+        children: [
+          DragTarget(
+            builder: (context, candidateData, rejectedData) {
+              return Center(
+                child: Obx(
+                  () => chatController.isSuccessful.value
+                      ? const SizedBox(
+                          height: 70,
+                          width: 70,
+                          child: Icon(
+                            Icons.lock,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : const SizedBox(
+                          height: 70,
+                          width: 70,
+                          child: Icon(
+                            Icons.lock_open,
+                            color: Colors.grey,
+                          ),
+                        ),
+                ),
+              );
+            },
+            onWillAccept: (data) {
+              return true;
+            },
+            onAccept: (data) {
+              chatController.isSuccessful.value = true;
+              chatController.micButtonPressed.value = false;
+            },
           ),
-          // width: 36,
-          // height: 36,
-          // padding: const EdgeInsets.all(8),
-          // decoration: BoxDecoration(color: kprimary2, boxShadow: [
-          //   BoxShadow(
-          //       color: Colors.grey.shade300,
-          //       blurRadius: 6,
-          //       offset: const Offset(0, 2))
-          // ]),
+          const SizedBox(
+            height: 10,
+          ),
+          const Icon(
+            Icons.arrow_upward,
+            color: Colors.grey,
+          )
+        ],
+      ),
+    );
+  }
+
+  scrol_button() {
+    return Obx(
+      () => Visibility(
+        visible: chatController.isMaxScroll.value,
+        child: GestureDetector(
+          onTap: () {
+            chatController.scrollToEnd();
+          },
+          child: CircleAvatar(
+            backgroundColor: kprimary2,
+            radius: 16,
+            child: Icon(
+              Icons.keyboard_double_arrow_down_sharp,
+              size: 20,
+              color: kprimary1,
+            ),
+            // width: 36,
+            // height: 36,
+            // padding: const EdgeInsets.all(8),
+            // decoration: BoxDecoration(color: kprimary2, boxShadow: [
+            //   BoxShadow(
+            //       color: Colors.grey.shade300,
+            //       blurRadius: 6,
+            //       offset: const Offset(0, 2))
+            // ]),
+          ),
         ),
       ),
     );
@@ -154,26 +198,21 @@ class _ChatScreenState extends State<ChatScreen> {
                     ))),
             Container(
                 padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(widget.title.toUpperCase(),
+                child: Text(title.toUpperCase(),
                     style: TextStyle(
                         color: kprimary5,
                         fontSize: 18,
                         fontWeight: FontWeight.w700))),
-            ProfilePic(widget.otherUserURl, size: 30),
+            ProfilePic(otherUserURl, size: 30),
           ],
         ),
       ),
     );
   }
 
-  double paddingAnimation = 8;
-  bool showSendButton = false;
-  double containerHeight = 34;
-  double containerWidth = 34;
-
   Widget chatMessages() {
     return GetX<ChatController>(
-        init: widget.controller,
+        init: chatController,
         builder: (controller) {
           if (controller.chats.isEmpty) {
             return Center(
@@ -184,10 +223,12 @@ class _ChatScreenState extends State<ChatScreen> {
           } else {
             return AnimatedContainer(
               padding: EdgeInsets.only(
-                  left: paddingAnimation, right: paddingAnimation, bottom: 15),
+                  left: chatController.showPadding.value ? 15 : 8,
+                  right: chatController.showPadding.value ? 15 : 8,
+                  bottom: 15),
               duration: const Duration(seconds: 1, milliseconds: 200),
               child: ListView.builder(
-                  controller: scrollController,
+                  controller: chatController.scrollController,
                   padding: const EdgeInsets.only(bottom: 60, top: 8),
                   itemCount: controller.chats.length,
                   reverse: true,
@@ -239,13 +280,13 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget correspondingTypeAllocation(MessageModel msg) {
     String code = msg.code;
 
-    bool isMine = (msg.sendBy == _MyUserUuid) ? true : false;
+    bool isMine = (msg.sendBy == myUID) ? true : false;
 
     Timestamp timestamp = msg.timestamp;
     DateTime msgDate =
         DateTime.fromMillisecondsSinceEpoch(timestamp.millisecondsSinceEpoch);
 
-    String url = !isMine ? widget.otherUserURl : widget.userProfile;
+    String url = !isMine ? otherUserURl : userProfile;
 
     if (code == "MSG") {
       return MessageBubble(isMine, msg.message, url, msgDate);
@@ -258,184 +299,175 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   addMesage(bool sendClicked) async {
-    if (txtMsg.text != "") {
-      String message = txtMsg.text.trim();
+    if (chatController.txtMsg.text != "") {
+      String message = chatController.txtMsg.text.trim();
       var lastmsgTimeStamp = Timestamp.now();
       Map<String, dynamic> msginfoMap = {
         "message": message,
-        "sendBy": _MyUserUuid,
+        "sendBy": myUID,
         "CODE": "MSG",
         "timestamp": lastmsgTimeStamp,
       };
-      widget.controller.addMessageSend(msginfoMap, widget.fcm, widget.myName);
+      chatController.addMessageSend(msginfoMap, fcm, myName);
 
       if (sendClicked) {
-        setState(() {
-          txtMsg.text = "";
-          showSendButton = false;
-          _scrollToEnd();
-        });
+        chatController.txtMsg.text = "";
+        chatController.showSendButton.value = false;
+        chatController.scrollToEnd();
       }
     }
   }
 
-  _scrollToEnd() {
-    scrollController
-        .animateTo(scrollController.position.minScrollExtent,
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.decelerate)
-        .then((value) {
-      setState(() {
-        isMaxScroll = false;
-      });
-    });
-  }
-
   addImage(File image) async {
-    String name =
-        _MyUserUuid + Timestamp.now().millisecondsSinceEpoch.toString();
+    String name = myUID + Timestamp.now().millisecondsSinceEpoch.toString();
     String aaddress =
-        await widget.controller.uploadFile(image, "ApptexChat/$name.jpg");
+        await chatController.uploadFile(image, "ApptexChat/$name.jpg");
 
     var lastmsgTimeStamp = Timestamp.now();
     Map<String, dynamic> msginfoMap = {
       "message": aaddress,
-      "sendBy": _MyUserUuid,
+      "sendBy": myUID,
       "CODE": "IMG",
       "timestamp": lastmsgTimeStamp,
     };
-    widget.controller.addMessageSend(msginfoMap, widget.fcm, widget.myName);
-  }
-
-  ScrollController textFieldScrollController = ScrollController();
-  static Future<File?> pickMedia_only() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 35,
-    );
-    if (pickedFile == null) return null;
-
-    return File(pickedFile.path);
+    chatController.addMessageSend(msginfoMap, fcm, myName);
   }
 
   typingArea(Size size) {
     return Container(
       width: size.width,
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       decoration: BoxDecoration(
           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(50)),
       alignment: Alignment.bottomCenter,
       child: Container(
-        margin: EdgeInsets.all(6),
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () async {
-                File? ss = await pickMedia_only();
-                if (ss != null) {
-                  addImage(ss);
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Icon(
-                  Icons.attach_file,
-                  color: Colors.grey.shade600,
-                  size: 27,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: TextField(
-                  cursorColor: kprimary1,
-                  onChanged: (val) {
-                    setState(() {
-                      if (val.trim().isEmpty) {
-                        paddingAnimation = 8;
-                        showSendButton = false;
-                      } else {
-                        paddingAnimation = 12;
-                        showSendButton = true;
-                      }
-                    });
-                  },
-                  maxLines: 4,
-                  minLines: 1,
-                  scrollController: textFieldScrollController,
-                  controller: txtMsg,
-                  style: TextStyle(
-                    color: Colors.grey.shade800,
-                    fontWeight: FontWeight.w600,
+        margin: const EdgeInsets.all(6),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Obx(
+          () => Row(
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  File? ss = await chatController.pickMedia_only();
+                  if (ss != null) {
+                    addImage(ss);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Icon(
+                    Icons.attach_file,
+                    color: Colors.grey.shade600,
+                    size: 27,
                   ),
-                  decoration: InputDecoration(
-                      hintText: "Send a message..",
-                      hintStyle: TextStyle(
-                          color: Colors.grey.shade600.withOpacity(0.7)),
-                      border: InputBorder.none),
                 ),
               ),
-            ),
-            showSendButton
-                ? GestureDetector(
-                    onTap: () {
-                      addMesage(true);
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: TextField(
+                    cursorColor: kprimary1,
+                    onChanged: (val) {
+                      if (val.trim().isEmpty) {
+                        chatController.showPadding.value = false;
+                        chatController.showSendButton.value = false;
+                      } else {
+                        chatController.showPadding.value = true;
+                        chatController.showSendButton.value = true;
+                      }
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: kprimary1,
-                      ),
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 20,
-                      ),
+                    maxLines: 4,
+                    minLines: 1,
+                    scrollController: chatController.textFieldScrollController,
+                    controller: chatController.txtMsg,
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontWeight: FontWeight.w600,
                     ),
-                  )
-                : GestureDetector(
-                    onLongPress: () {
-                      setState(() {
-                        containerHeight = 50;
-                        containerWidth = 50;
-                      });
-                    },
-                    onLongPressCancel: () {
-                      setState(() {
-                        containerHeight = 34;
-                        containerWidth = 34;
-                      });
-                    },
-                    onLongPressEnd: (d) {
-                      //TODO send message
-                      setState(() {
-                        containerHeight = 34;
-                        containerWidth = 34;
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: Duration(
-                        milliseconds: 300,
+                    decoration: InputDecoration(
+                        hintText: chatController.micButtonPressed.value
+                            ? ""
+                            : "Send a message..",
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade600.withOpacity(0.7)),
+                        border: InputBorder.none),
+                  ),
+                ),
+              ),
+              chatController.showSendButton.value
+                  ? GestureDetector(
+                      onTap: () {
+                        addMesage(true);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: kprimary1,
+                        ),
+                        child: const Icon(
+                          Icons.send,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
-                      padding: const EdgeInsets.all(5),
-                      height: containerHeight,
-                      width: containerWidth,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: kprimary1,
+                    )
+                  : GestureDetector(
+                      onLongPress: () {
+                        chatController.micButtonPressed.value = true;
+                      },
+                      onLongPressCancel: () {
+                        chatController.micButtonPressed.value = false;
+                      },
+                      onLongPressEnd: (d) {
+                        //TODO send message
+
+                        chatController.micButtonPressed.value = false;
+                      },
+                      child: LongPressDraggable(
+                        data: "mic",
+                        onDragStarted: () {
+                          chatController.micButtonPressed.value = true;
+                        },
+                        childWhenDragging: const SizedBox(),
+                        //axis: Axis.vertical,
+                        feedback: Container(
+                          height: 35,
+                          width: 35,
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: kprimary1,
+                          ),
+                          child: const Icon(
+                            Icons.mic,
+                            color: Colors.white,
+                          ),
+                        ),
+                        child: AnimatedContainer(
+                          duration: const Duration(
+                            milliseconds: 300,
+                          ),
+                          padding: const EdgeInsets.all(5),
+                          height:
+                              chatController.micButtonPressed.value ? 60 : 40,
+                          width:
+                              chatController.micButtonPressed.value ? 60 : 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: kprimary1,
+                          ),
+                          child: const Icon(
+                            Icons.mic,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.mic,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-          ],
+                    )
+            ],
+          ),
         ),
       ),
     );
