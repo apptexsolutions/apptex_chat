@@ -64,13 +64,13 @@ class ChatScreen extends StatelessWidget {
                       right: 28,
                       child: scrol_button(),
                     ),
-                    if (chatController.micButtonPressed.value)
+                    if (chatController.showLockAndSlide.value)
                       const Positioned(
                         right: 80,
                         bottom: 30,
                         child: Text('< Slide to cancel'),
                       ),
-                    if (chatController.micButtonPressed.value)
+                    if (chatController.showLockAndSlide.value)
                       Positioned(
                         right: 20,
                         bottom: 22,
@@ -127,7 +127,7 @@ class ChatScreen extends StatelessWidget {
             },
             onAccept: (data) {
               chatController.isSuccessful.value = true;
-              chatController.micButtonPressed.value = false;
+              chatController.showLockAndSlide.value = false;
             },
           ),
           const SizedBox(
@@ -158,15 +158,6 @@ class ChatScreen extends StatelessWidget {
               size: 20,
               color: kprimary1,
             ),
-            // width: 36,
-            // height: 36,
-            // padding: const EdgeInsets.all(8),
-            // decoration: BoxDecoration(color: kprimary2, boxShadow: [
-            //   BoxShadow(
-            //       color: Colors.grey.shade300,
-            //       blurRadius: 6,
-            //       offset: const Offset(0, 2))
-            // ]),
           ),
         ),
       ),
@@ -417,6 +408,7 @@ class ChatScreen extends StatelessWidget {
                   : GestureDetector(
                       onLongPress: () {
                         chatController.micButtonPressed.value = true;
+                        chatController.showLockAndSlide.value = true;
                       },
                       onLongPressCancel: () {
                         chatController.micButtonPressed.value = false;
@@ -430,12 +422,18 @@ class ChatScreen extends StatelessWidget {
                         data: "mic",
                         onDragStarted: () {
                           chatController.micButtonPressed.value = true;
+                          chatController.showLockAndSlide.value = true;
+                        },
+                        onDragEnd: (_) {
+                          chatController.showLockAndSlide.value = false;
                         },
                         childWhenDragging: const SizedBox(),
                         //axis: Axis.vertical,
                         feedback: Container(
-                          height: 35,
-                          width: 35,
+                          height:
+                              chatController.micButtonPressed.value ? 60 : 40,
+                          width:
+                              chatController.micButtonPressed.value ? 60 : 40,
                           padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
