@@ -18,7 +18,7 @@ class MessagesController extends GetxController {
         .snapshots()
         .map((event) {
       var s = event.docs.map((e) => ChatModel.fromMap(e)).toList();
-      print(s.length);
+
       return s;
     }));
   }

@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names, file_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -7,7 +7,7 @@ import 'package:apptex_chat/src/Models/UserModel.dart';
 class ChatModel {
   String uid;
   Timestamp createdAt; // IMG || MSG || AUDIO || VIDEO
-  String lastMessage;
+  String? lastMessage;
   String lastMessageSendBy;
   int unReadCount;
   bool ReadByOther;
@@ -48,7 +48,7 @@ class ChatModel {
     return ChatModel(
       uid: map['uid'] as String,
       createdAt: map['createdAt'],
-      lastMessage: map['lastMessage'] as String,
+      lastMessage: map['lastMessage'],
       lastMessageSendBy: map['lastMessageSendBy'] as String,
       unReadCount: map['unReadCount'] as int,
       ReadByOther: map['ReadByOther'] as bool,

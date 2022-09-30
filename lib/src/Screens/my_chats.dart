@@ -1,3 +1,4 @@
+import 'package:apptex_chat/apptex_chat.dart';
 import 'package:apptex_chat/src/Controllers/messages_controller.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
@@ -27,56 +28,105 @@ class MyChats extends StatelessWidget {
                 itemCount: controler.messags.length,
                 reverse: false,
                 itemBuilder: (context, index) {
-                  ChatModel model = controler.messags[index];
-                  UserModel other = model.users
-                      .firstWhere((element) => element.uid != controler.myuuid);
-                  return SizedBox(
-                    width: 70,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: ProfilePic(
-                            other.profileUrl,
-                            size: 55,
-                            radius: 15,
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(top: 1),
-                              child: Text(
-                                other.name,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey.shade900),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            SizedBox(
-                              width: size.width * 0.55,
-                              child: Text(
-                                model.lastMessage,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey.shade500),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  );
+                  if (controler.messags
+                      .where((p0) => p0.lastMessage != null)
+                      .isEmpty) {
+                    return Center(
+                        child: Text(
+                      "No messages yet!",
+                      style: myStyle(15, true, color: Colors.grey),
+                    ));
+                  } else {
+                    ChatModel model = controler.messags[index];
+                    UserModel other = model.users.firstWhere(
+                        (element) => element.uid != controler.myuuid);
+                    return model.lastMessage == null
+                        ? Container()
+                        : chat_tile(context, other, size, model);
+                  }
                 }),
           )
         ],
+      ),
+    );
+  }
+
+  Widget chat_tile(
+      BuildContext context, UserModel other, Size size, ChatModel model) {
+    return InkWell(
+      onTap: () {
+        AppTexChat.startChat(context,
+            receiver_name: other.name,
+            receiver_id: other.uid,
+            receiver_profileUrl: other.profileUrl);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        width: 70,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ProfilePic(
+                other.profileUrl,
+                size: 55,
+                radius: 15,
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Text(
+                      other.name,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade900),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  SizedBox(
+                    child: Text(
+                      model.lastMessage!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade500),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: Text(
+                        "",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade900),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -155,7 +205,7 @@ class MyChats extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Container(
-                    margin: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
                     child: Icon(
                       Icons.arrow_back_ios_new_sharp,
                       color: Colors.grey.shade800,

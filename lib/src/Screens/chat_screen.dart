@@ -182,7 +182,7 @@ class ChatScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Container(
-                    margin: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
                     child: Icon(
                       Icons.arrow_back_ios_new,
                       color: Colors.grey.shade800,
@@ -412,6 +412,7 @@ class ChatScreen extends StatelessWidget {
                         chatController.micButtonPressed.value = false;
                       },
                       onLongPressEnd: (d) {
+                        // ignore: todo
                         //TODO send message
 
                         chatController.micButtonPressed.value = false;

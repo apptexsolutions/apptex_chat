@@ -40,7 +40,7 @@ class AppTexChat {
   static startChat(BuildContext context,
       {required String receiver_name,
       required String receiver_id,
-      String receiver_profileUrl = ""}) {
+      String receiver_profileUrl = ""}) async {
     if (_uuid == null) {
       // ignore: avoid_print
       print(
@@ -49,31 +49,42 @@ class AppTexChat {
     }
     String chatRoomID = getGenericuuid(receiver_id);
 
-    ChatModel model = ChatModel(
-        uid: chatRoomID,
-        createdAt: Timestamp.now(),
-        lastMessage: "",
-        lastMessageSendBy: "",
-        unReadCount: 0,
-        ReadByOther: false,
-        uuids: [_uuid!, receiver_id],
-        typers: [],
-        lastMessageTimeStamp: Timestamp.now(),
-        users: [
-          UserModel(uid: _uuid!, name: _name!, profileUrl: _profileURl!),
-          UserModel(
-              uid: receiver_id,
-              name: receiver_name,
-              profileUrl: receiver_profileUrl)
-        ]);
-
-    firebaseFirestore
+    DocumentSnapshot ss = await firebaseFirestore
         .collection(roomCollection)
         .doc(chatRoomID)
-        .set(model.toMap());
+        .get();
 
-    ChatController controller = ChatController(chatRoomID);
-    controller.startChat(context, model, _uuid!);
+    if (!ss.exists) {
+      ChatModel model = ChatModel(
+          uid: chatRoomID,
+          createdAt: Timestamp.now(),
+          lastMessage: "",
+          lastMessageSendBy: "",
+          unReadCount: 0,
+          ReadByOther: false,
+          uuids: [_uuid!, receiver_id],
+          typers: [],
+          lastMessageTimeStamp: Timestamp.now(),
+          users: [
+            UserModel(uid: _uuid!, name: _name!, profileUrl: _profileURl!),
+            UserModel(
+                uid: receiver_id,
+                name: receiver_name,
+                profileUrl: receiver_profileUrl)
+          ]);
+      model.lastMessage = null;
+      firebaseFirestore
+          .collection(roomCollection)
+          .doc(chatRoomID)
+          .set(model.toMap());
+
+      ChatController controller = ChatController(chatRoomID);
+      controller.startChat(context, model, _uuid!);
+    } else {
+      ChatModel model = ChatModel.fromMap(ss);
+      ChatController controller = ChatController(chatRoomID);
+      controller.startChat(context, model, _uuid!);
+    }
   }
 
   static String getGenericuuid(String userBUuid) {
