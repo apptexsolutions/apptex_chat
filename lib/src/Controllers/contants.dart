@@ -30,12 +30,12 @@ List months = [
 ];
 
 //print(weekdayName[DateTime.now().weekday]);
-Color get kprimary1 => hexStringToColor("dc5b5f"); // main
-Color get kprimary2 => hexStringToColor("e8eaed"); // grey Bubble
-Color get kprimary3 => hexStringToColor("d0d9e3"); // grey time
-Color get kprimary4 => hexStringToColor("525EFF");
-Color get kprimary5 => hexStringToColor("142f58"); // used for heading
-Color get kWhite => hexStringToColor("ffffff");
+Color kprimary1 = hexStringToColor("dc5b5f"); // main
+Color kprimary2 = hexStringToColor("e8eaed"); // grey Bubble
+Color kprimary3 = hexStringToColor("d0d9e3"); // grey time
+Color kprimary4 = hexStringToColor("525EFF");
+Color kprimary5 = hexStringToColor("142f58"); // used for heading
+Color kWhite = hexStringToColor("ffffff");
 
 Color hexStringToColor(String hexColor) {
   hexColor = hexColor.toUpperCase().replaceAll("#", "");

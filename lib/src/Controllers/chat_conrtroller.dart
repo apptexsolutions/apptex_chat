@@ -28,10 +28,9 @@ class ChatController extends GetxController {
   RxBool micButtonPressed = false.obs;
   RxBool showLockAndSlide = false.obs;
   RxBool isSuccessful = false.obs;
+  RxBool isChatReady = false.obs;
 
-  ChatController(this.roomUID) {
-    // init();
-  }
+  ChatController(this.roomUID);
 
   @override
   void onInit() {
@@ -50,8 +49,14 @@ class ChatController extends GetxController {
         .snapshots()
         .map((event) {
       var s = event.docs.map((e) => MessageModel.fromSnapshot(e)).toList();
+
       return s;
     }));
+
+    ever(chats, (s) {
+      isChatReady.value = true;
+    });
+
     super.onInit();
   }
 
@@ -102,9 +107,9 @@ class ChatController extends GetxController {
       String msg = msgInput["CODE"] == "IMG" ? "Image" : msgInput["message"];
       Map<String, dynamic> lastMessageInfoMap = {
         "ReadByOther": false,
-        "LastMessage": msg,
-        "LastMsg_TimeStamp": Timestamp.now(),
-        "LastMsg_SentBy": msgInput["sendBy"]
+        "lastMessage": msg,
+        "lastMessageTimeStamp": Timestamp.now(),
+        "lastMessageSendBy": msgInput["sendBy"]
       };
 
       firebaseFirestore
@@ -117,15 +122,18 @@ class ChatController extends GetxController {
   }
 
   scrollToEnd() {
-    scrollController
-        .animateTo(scrollController.position.minScrollExtent,
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.decelerate)
-        .then((value) {
-      isMaxScroll.value = false;
-    });
+    if (chats.length > 1) {
+      scrollController
+          .animateTo(scrollController.position.minScrollExtent,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.decelerate)
+          .then((value) {
+        isMaxScroll.value = false;
+      });
+    }
   }
 
+  // ignore: non_constant_identifier_names
   Future<File?> pickMedia_only() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,

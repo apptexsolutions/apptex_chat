@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
+  AppTexChat.init();
   runApp(const MyApp());
 }
 
@@ -32,7 +33,7 @@ class StartChat extends StatelessWidget {
   String otherUser = "xxx2";
 
   StartChat({Key? key}) : super(key: key) {
-    AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
+    AppTexChat.Login_My_User(FullName: "Jamshed Khan Ali", your_uuid: myUUID);
   }
 
   @override
@@ -57,11 +58,11 @@ class StartChat extends StatelessWidget {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
 
-                AppTexChat.startChat(context,
+                AppTexChat.Start_Chat_With(context,
                     receiver_name: "Sayed idrees",
                     receiver_id: otherUser,
                     receiver_profileUrl:
-                        "https://p16-sign-sg.tiktokcdn.com/aweme/720x720/tiktok-obj/72ee4a61560c943694ae95506d65d325.jpeg?x-expires=1664506800&x-signature=xciRzWJq2X7EfBZGUXIsio%2FQmDw%3D");
+                        "https://www.emmys.com/sites/default/files/styles/bio_pics_detail/public/bios/alexandra-daddario-2022-noms-450x600.jpg?itok=pACDocwq");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',
@@ -72,13 +73,14 @@ class StartChat extends StatelessWidget {
           Center(
             child: CustomButtonSquare(
               onTap: () {
-                //this required two uuids..
-                //current User uuid, and where you want to chat with.
-                AppTexChat.startChat(context,
-                    receiver_name: "Jamshed", receiver_id: otherUser);
+                //This will trasnfer you to the Chats
+
+                AppTexChat.OpenMessages(context);
+
+                //new
               },
               buttonColor: Colors.green,
-              buttonName: 'Open My Chats',
+              buttonName: 'Open all of my Chats',
               width: size.width * 0.8,
             ),
           )
