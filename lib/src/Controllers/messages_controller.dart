@@ -6,12 +6,13 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'contants.dart';
 
 class MessagesController extends GetxController {
-  RxList<ChatModel> messags = <ChatModel>[].obs;
+  RxList<ChatModel> chats = <ChatModel>[].obs;
+  RxList<ChatModel> filteredChats = <ChatModel>[].obs;
   MessagesController(this.myuuid);
   String myuuid;
 
   bindAllChats() {
-    messags.bindStream(FirebaseFirestore.instance
+    chats.bindStream(FirebaseFirestore.instance
         .collection(roomCollection)
         .where("uuids", arrayContains: myuuid)
         .orderBy("lastMessageTimeStamp", descending: true)

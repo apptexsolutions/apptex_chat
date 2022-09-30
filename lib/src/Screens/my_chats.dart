@@ -27,10 +27,10 @@ class MyChats extends StatelessWidget {
           const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
-                itemCount: controler.messags.length,
+                itemCount: controler.chats.length,
                 reverse: false,
                 itemBuilder: (context, index) {
-                  if (controler.messags
+                  if (controler.chats
                       .where((p0) => p0.lastMessage != null)
                       .isEmpty) {
                     return Center(
@@ -39,7 +39,7 @@ class MyChats extends StatelessWidget {
                       style: myStyle(15, true, color: Colors.grey),
                     ));
                   } else {
-                    ChatModel model = controler.messags[index];
+                    ChatModel model = controler.chats[index];
                     UserModel other = model.users.firstWhere(
                         (element) => element.uid != controler.myuuid);
                     return model.lastMessage == null

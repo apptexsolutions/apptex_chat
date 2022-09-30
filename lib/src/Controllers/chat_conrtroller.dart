@@ -14,7 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import '../Models/MessageModel.dart';
 
 class ChatController extends GetxController {
-  RxList<MessageModel> chats = <MessageModel>[].obs;
+  RxList<MessageModel> messages = <MessageModel>[].obs;
   //FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   String roomUID;
 
@@ -41,7 +41,7 @@ class ChatController extends GetxController {
         isMaxScroll.value = false;
       }
     });
-    chats.bindStream(firebaseFirestore
+    messages.bindStream(firebaseFirestore
         .collection(roomCollection)
         .doc(roomUID)
         .collection(chatMessagesCollection)
@@ -53,7 +53,7 @@ class ChatController extends GetxController {
       return s;
     }));
 
-    ever(chats, (s) {
+    ever(messages, (s) {
       isChatReady.value = true;
     });
 
@@ -122,7 +122,7 @@ class ChatController extends GetxController {
   }
 
   scrollToEnd() {
-    if (chats.length > 1) {
+    if (messages.length > 1) {
       scrollController
           .animateTo(scrollController.position.minScrollExtent,
               duration: const Duration(milliseconds: 600),

@@ -62,7 +62,7 @@ class StartChat extends StatelessWidget {
                     receiver_name: "Sayed idrees",
                     receiver_id: otherUser,
                     receiver_profileUrl:
-                        "https://www.emmys.com/sites/default/files/styles/bio_pics_detail/public/bios/alexandra-daddario-2022-noms-450x600.jpg?itok=pACDocwq");
+                        "https://sayed.skysoltech.com/images/syedidrees.jpg");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',
