@@ -76,7 +76,7 @@ class StartChat extends StatelessWidget {
                 AppTexChat.openChats(context);
               },
               buttonColor: Colors.green,
-              buttonName: 'Open My Chats',
+              buttonName: 'Open all of my Chats',
               width: size.width * 0.8,
             ),
           )

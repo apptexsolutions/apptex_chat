@@ -158,15 +158,6 @@ class ChatScreen extends StatelessWidget {
               size: 20,
               color: kprimary1,
             ),
-            // width: 36,
-            // height: 36,
-            // padding: const EdgeInsets.all(8),
-            // decoration: BoxDecoration(color: kprimary2, boxShadow: [
-            //   BoxShadow(
-            //       color: Colors.grey.shade300,
-            //       blurRadius: 6,
-            //       offset: const Offset(0, 2))
-            // ]),
           ),
         ),
       ),

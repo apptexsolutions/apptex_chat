@@ -21,7 +21,7 @@ class MyChats extends StatelessWidget {
       body: Column(
         children: [
           typingArea(size),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
                 itemCount: controler.messags.length,
@@ -30,13 +30,12 @@ class MyChats extends StatelessWidget {
                   ChatModel model = controler.messags[index];
                   UserModel other = model.users
                       .firstWhere((element) => element.uid != controler.myuuid);
-                  return Container(
+                  return SizedBox(
                     width: 70,
-                    height: 55,
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: ProfilePic(
                             other.profileUrl,
                             size: 55,
@@ -61,7 +60,7 @@ class MyChats extends StatelessWidget {
                             SizedBox(
                               width: size.width * 0.55,
                               child: Text(
-                                " asd a asd asd sd as asd as  asd as dasdas sa  dasd   ",
+                                model.lastMessage,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(

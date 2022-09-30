@@ -114,13 +114,15 @@ class ChatController extends GetxController {
   }
 
   scrollToEnd() {
-    // scrollController
-    //     .animateTo(scrollController.position.minScrollExtent,
-    //         duration: const Duration(milliseconds: 600),
-    //         curve: Curves.decelerate)
-    //     .then((value) {
-    //   isMaxScroll.value = false;
-    // });
+    if (chats.length > 1) {
+      scrollController
+          .animateTo(scrollController.position.minScrollExtent,
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.decelerate)
+          .then((value) {
+        isMaxScroll.value = false;
+      });
+    }
   }
 
   // ignore: non_constant_identifier_names
