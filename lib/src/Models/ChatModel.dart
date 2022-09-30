@@ -10,6 +10,7 @@ class ChatModel {
   String lastMessage;
   String lastMessageSendBy;
   int unReadCount;
+  bool ReadByOther;
   List<dynamic> uuids;
   List<dynamic> typers;
   Timestamp lastMessageTimeStamp;
@@ -20,6 +21,7 @@ class ChatModel {
     required this.lastMessage,
     required this.lastMessageSendBy,
     required this.unReadCount,
+    required this.ReadByOther,
     required this.uuids,
     required this.typers,
     required this.lastMessageTimeStamp,
@@ -33,6 +35,7 @@ class ChatModel {
       'lastMessage': lastMessage,
       'lastMessageSendBy': lastMessageSendBy,
       'unReadCount': unReadCount,
+      'ReadByOther': ReadByOther,
       'uuids': uuids,
       'typers': typers,
       'lastMessageTimeStamp': lastMessageTimeStamp,
@@ -40,13 +43,15 @@ class ChatModel {
     };
   }
 
-  factory ChatModel.fromMap(Map<String, dynamic> map) {
+  factory ChatModel.fromMap(DocumentSnapshot snapshot) {
+    Map<String, dynamic> map = snapshot.data() as Map<String, dynamic>;
     return ChatModel(
       uid: map['uid'] as String,
       createdAt: map['createdAt'],
       lastMessage: map['lastMessage'] as String,
       lastMessageSendBy: map['lastMessageSendBy'] as String,
       unReadCount: map['unReadCount'] as int,
+      ReadByOther: map['ReadByOther'] as bool,
       uuids: map['uuids'], //List<String>.from((map['uuids'] as List<String>),
       typers:
           map['uuids'], // List<String>.from((map['typers'] as List<String>),

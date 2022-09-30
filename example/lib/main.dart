@@ -61,7 +61,7 @@ class StartChat extends StatelessWidget {
                     receiver_name: "Sayed idrees",
                     receiver_id: otherUser,
                     receiver_profileUrl:
-                        "https://sayed.skysoltech.com/images/syedidrees.jpg");
+                        "https://www.emmys.com/sites/default/files/styles/bio_pics_detail/public/bios/alexandra-daddario-2022-noms-450x600.jpg?itok=pACDocwq");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',
@@ -72,10 +72,8 @@ class StartChat extends StatelessWidget {
           Center(
             child: CustomButtonSquare(
               onTap: () {
-                //this required two uuids..
-                //current User uuid, and where you want to chat with.
-                AppTexChat.startChat(context,
-                    receiver_name: "Jamshed", receiver_id: otherUser);
+                //This will trasnfer you to the Chats
+                AppTexChat.openChats(context);
               },
               buttonColor: Colors.green,
               buttonName: 'Open My Chats',

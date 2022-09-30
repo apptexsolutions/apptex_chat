@@ -2,27 +2,39 @@
 
 import 'package:apptex_chat/src/Controllers/chat_conrtroller.dart';
 import 'package:apptex_chat/src/Controllers/contants.dart';
+import 'package:apptex_chat/src/Controllers/messages_controller.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
+import 'package:apptex_chat/src/Screens/my_chats.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class AppTexChat {
   static String? _uuid;
   static String? _name;
   static String? _profileURl;
-
+  static MessagesController? controler;
   static bool started = false;
   static initializeUser(
       {required String FullName,
       required String your_uuid,
-      String profileUrl = ""}) {
+      String profileUrl = ""}) async {
     if (!started) {
+      await Firebase.initializeApp();
+
       _uuid ??= your_uuid;
       _name ??= FullName;
       _profileURl ??= profileUrl;
       started = true;
+      controler = MessagesController(your_uuid);
+      controler!.bindAllChats();
     }
+  }
+
+  static openChats(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MyChats(controler!)));
   }
 
   static startChat(BuildContext context,
@@ -43,6 +55,7 @@ class AppTexChat {
         lastMessage: "",
         lastMessageSendBy: "",
         unReadCount: 0,
+        ReadByOther: false,
         uuids: [_uuid!, receiver_id],
         typers: [],
         lastMessageTimeStamp: Timestamp.now(),

@@ -186,23 +186,22 @@ class ChatScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
+                borderRadius: BorderRadius.circular(50),
                 onTap: () {
                   Navigator.pop(context);
                 },
                 child: Container(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    margin: EdgeInsets.all(10),
                     child: Icon(
                       Icons.arrow_back_ios_new,
                       color: Colors.grey.shade800,
                       size: 22,
                     ))),
-            Container(
-                padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(title.toUpperCase(),
-                    style: TextStyle(
-                        color: kprimary5,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700))),
+            Text(title.toUpperCase(),
+                style: TextStyle(
+                    color: kprimary5,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700)),
             ProfilePic(otherUserURl, size: 30),
           ],
         ),
@@ -611,10 +610,12 @@ class ImageBubble extends StatelessWidget {
 
 // ignore: must_be_immutable
 class ProfilePic extends StatelessWidget {
-  ProfilePic(this.url, {this.size = 48, Key? key}) : super(key: key);
+  ProfilePic(this.url, {this.size = 48, this.radius = 100, Key? key})
+      : super(key: key);
   String url;
 
   final double size;
+  final double radius;
   @override
   Widget build(BuildContext context) {
     url = url.length <= 7 ? "" : url;
@@ -622,7 +623,7 @@ class ProfilePic extends StatelessWidget {
 
     double imsix = size;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(100),
+      borderRadius: BorderRadius.circular(radius),
       child: isNotUrl
           ? Container(
               color: kprimary1,
