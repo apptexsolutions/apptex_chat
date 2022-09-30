@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:apptex_chat/apptex_chat.dart';
 import 'package:apptex_chat/src/Controllers/messages_controller.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
@@ -106,23 +108,21 @@ class MyChats extends StatelessWidget {
             ),
             Expanded(
               flex: 1,
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 1),
-                      child: Text(
-                        "",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade900),
-                      ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Text(
+                      "",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade900),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             )
           ],
