@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
+  AppTexChat.init();
   runApp(const MyApp());
 }
 
@@ -32,7 +33,7 @@ class StartChat extends StatelessWidget {
   String otherUser = "xxx2";
 
   StartChat({Key? key}) : super(key: key) {
-    AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
+    AppTexChat.Login_My_User(FullName: "Jamshed Khan Ali", your_uuid: myUUID);
   }
 
   @override
@@ -57,7 +58,7 @@ class StartChat extends StatelessWidget {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
 
-                AppTexChat.startChat(context,
+                AppTexChat.Start_Chat_With(context,
                     receiver_name: "Sayed idrees",
                     receiver_id: otherUser,
                     receiver_profileUrl:
@@ -73,7 +74,10 @@ class StartChat extends StatelessWidget {
             child: CustomButtonSquare(
               onTap: () {
                 //This will trasnfer you to the Chats
-                AppTexChat.openChats(context);
+
+                AppTexChat.OpenMessages(context);
+
+                //new
               },
               buttonColor: Colors.green,
               buttonName: 'Open all of my Chats',

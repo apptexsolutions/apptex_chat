@@ -12,42 +12,74 @@ import 'package:flutter/material.dart';
 
 class AppTexChat {
   static String? _uuid;
+  static bool _isInited = false;
   static String? _name;
   static String? _profileURl;
-  static MessagesController? controler;
-  static bool started = false;
-  static initializeUser(
+  static MessagesController? _controler;
+  static bool _started = false;
+  static Login_My_User(
       {required String FullName,
       required String your_uuid,
       String profileUrl = ""}) async {
-    if (!started) {
+    if (!_isInited) {
+      // ignore: avoid_print
+      print(
+          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
+      return;
+    }
+
+    if (!_started) {
       await Firebase.initializeApp();
 
       _uuid ??= your_uuid;
       _name ??= FullName;
       _profileURl ??= profileUrl;
-      started = true;
-      controler = MessagesController(your_uuid);
-      controler!.bindAllChats();
+      _started = true;
+      _controler = MessagesController(your_uuid);
+      _controler!.bindAllChats();
     }
   }
 
-  static openChats(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MyChats(controler!)));
-  }
-
-  static startChat(BuildContext context,
-      {required String receiver_name,
-      required String receiver_id,
-      String receiver_profileUrl = ""}) async {
+  static OpenMessages(BuildContext context) {
+    if (!_isInited) {
+      // ignore: avoid_print
+      print(
+          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
+      return;
+    }
     if (_uuid == null) {
       // ignore: avoid_print
       print(
-          "ErrorCode XID_044: Please Call Initialize function before calling Start chat");
+          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
     }
-    String chatRoomID = getGenericuuid(receiver_id);
+
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
+  }
+
+  static init({Color? primary}) {
+    _isInited = true;
+    if (primary != null) kprimary1 = primary;
+  }
+
+  static Start_Chat_With(BuildContext context,
+      {required String receiver_name,
+      required String receiver_id,
+      String receiver_profileUrl = ""}) async {
+    if (!_isInited) {
+      // ignore: avoid_print
+      print(
+          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
+      return;
+    }
+    if (_uuid == null) {
+      // ignore: avoid_print
+      print(
+          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
+      return;
+    }
+    String chatRoomID = _getGenericuuid(receiver_id);
 
     DocumentSnapshot ss = await firebaseFirestore
         .collection(roomCollection)
@@ -83,11 +115,26 @@ class AppTexChat {
     } else {
       ChatModel model = ChatModel.fromMap(ss);
       ChatController controller = ChatController(chatRoomID);
+
+      model.users.clear();
+
+      model.users
+          .add(UserModel(uid: _uuid!, name: _name!, profileUrl: _profileURl!));
+      model.users.add(UserModel(
+          uid: receiver_id,
+          name: receiver_name,
+          profileUrl: receiver_profileUrl));
+
       controller.startChat(context, model, _uuid!);
+
+      firebaseFirestore
+          .collection(roomCollection)
+          .doc(chatRoomID)
+          .update(model.toMap());
     }
   }
 
-  static String getGenericuuid(String userBUuid) {
+  static String _getGenericuuid(String userBUuid) {
     String chatRoomID = "";
     if (_uuid!.compareTo(userBUuid) == 1) {
       chatRoomID = _uuid! + "" + userBUuid;

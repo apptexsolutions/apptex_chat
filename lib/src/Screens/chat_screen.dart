@@ -205,11 +205,16 @@ class ChatScreen extends StatelessWidget {
         init: chatController,
         builder: (controller) {
           if (controller.chats.isEmpty) {
-            return Center(
-                child: Text(
-              "No Chats yet!",
-              style: myStyle(16, true, color: Colors.grey),
-            ));
+            return !controller.isChatReady.value
+                ? Center(
+                    child: CircularProgressIndicator(
+                    color: kprimary1,
+                  ))
+                : Center(
+                    child: Text(
+                    "No Chats yet!",
+                    style: myStyle(16, true, color: Colors.grey),
+                  ));
           } else {
             return AnimatedContainer(
               padding: EdgeInsets.only(

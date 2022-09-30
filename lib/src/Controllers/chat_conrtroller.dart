@@ -27,6 +27,7 @@ class ChatController extends GetxController {
   RxBool showSendButton = false.obs;
   RxBool micButtonPressed = false.obs;
   RxBool isSuccessful = false.obs;
+  RxBool isChatReady = false.obs;
 
   ChatController(this.roomUID);
 
@@ -47,8 +48,14 @@ class ChatController extends GetxController {
         .snapshots()
         .map((event) {
       var s = event.docs.map((e) => MessageModel.fromSnapshot(e)).toList();
+
       return s;
     }));
+
+    ever(chats, (s) {
+      isChatReady.value = true;
+    });
+
     super.onInit();
   }
 

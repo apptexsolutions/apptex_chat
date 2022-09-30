@@ -55,7 +55,7 @@ class MyChats extends StatelessWidget {
       BuildContext context, UserModel other, Size size, ChatModel model) {
     return InkWell(
       onTap: () {
-        AppTexChat.startChat(context,
+        AppTexChat.Start_Chat_With(context,
             receiver_name: other.name,
             receiver_id: other.uid,
             receiver_profileUrl: other.profileUrl);
