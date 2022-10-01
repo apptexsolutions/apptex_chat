@@ -204,7 +204,7 @@ class ChatScreen extends StatelessWidget {
     return GetX<ChatController>(
         init: chatController,
         builder: (controller) {
-          if (controller.chats.isEmpty) {
+          if (controller.messages.isEmpty) {
             return !controller.isChatReady.value
                 ? Center(
                     child: CircularProgressIndicator(
@@ -225,17 +225,17 @@ class ChatScreen extends StatelessWidget {
               child: ListView.builder(
                   controller: chatController.scrollController,
                   padding: const EdgeInsets.only(bottom: 60, top: 8),
-                  itemCount: controller.chats.length,
+                  itemCount: controller.messages.length,
                   reverse: true,
                   itemBuilder: (context, index) {
-                    MessageModel model = controller.chats[index];
+                    MessageModel model = controller.messages[index];
 
                     return Column(
                       children: [
                         correspondingTypeAllocation(model),
                         if (index != 0 &&
                             model.timestamp.toDate().day !=
-                                controller.chats[index - 1].timestamp
+                                controller.messages[index - 1].timestamp
                                     .toDate()
                                     .day)
                           Container(
@@ -255,7 +255,7 @@ class ChatScreen extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 getMessageReferecneTime(controller
-                                    .chats[index - 1].timestamp
+                                    .messages[index - 1].timestamp
                                     .toDate()),
                                 style: TextStyle(
                                     color: kprimary1,

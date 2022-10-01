@@ -58,9 +58,10 @@ class AppTexChat {
         context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
   }
 
-  static init({Color? primary}) {
+  static init({Color? primaryColor, Color? secondaryColor}) {
     _isInited = true;
-    if (primary != null) kprimary1 = primary;
+    if (primaryColor != null) kprimary1 = primaryColor;
+    if (secondaryColor != null) kprimary5 = secondaryColor;
   }
 
   static Start_Chat_With(BuildContext context,
