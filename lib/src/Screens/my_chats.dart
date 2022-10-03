@@ -6,6 +6,7 @@ import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
 import 'package:apptex_chat/src/Screens/chat_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
 import '../Controllers/contants.dart';
 
@@ -26,27 +27,37 @@ class MyChats extends StatelessWidget {
           typingArea(size),
           const SizedBox(height: 20),
           Expanded(
-            child: ListView.builder(
-                itemCount: controler.chats.length,
-                reverse: false,
-                itemBuilder: (context, index) {
-                  if (controler.chats
-                      .where((p0) => p0.lastMessage != null)
-                      .isEmpty) {
-                    return Center(
-                        child: Text(
-                      "No messages yet!",
-                      style: myStyle(15, true, color: Colors.grey),
-                    ));
-                  } else {
-                    ChatModel model = controler.chats[index];
-                    UserModel other = model.users.firstWhere(
-                        (element) => element.uid != controler.myuuid);
-                    return model.lastMessage == null
-                        ? Container()
-                        : chat_tile(context, other, size, model);
-                  }
-                }),
+            child: Obx(() {
+              if (controler.filteredChats.isEmpty) {
+                return Center(
+                    child: Text(
+                  "No chats found!",
+                  style: myStyle(15, true, color: Colors.grey),
+                ));
+              } else {
+                return ListView.builder(
+                    itemCount: controler.filteredChats.length,
+                    reverse: false,
+                    itemBuilder: (context, index) {
+                      if (controler.filteredChats
+                          .where((p0) => p0.lastMessage != null)
+                          .isEmpty) {
+                        return Center(
+                            child: Text(
+                          "No messages yet!",
+                          style: myStyle(15, true, color: Colors.grey),
+                        ));
+                      } else {
+                        ChatModel model = controler.filteredChats[index];
+                        UserModel other = model.users.firstWhere(
+                            (element) => element.uid != controler.myuuid);
+                        return model.lastMessage == null
+                            ? Container()
+                            : chat_tile(context, other, size, model);
+                      }
+                    });
+              }
+            }),
           )
         ],
       ),
@@ -134,13 +145,13 @@ class MyChats extends StatelessWidget {
   typingArea(Size size) {
     return Container(
       width: size.width,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(50)),
       alignment: Alignment.bottomCenter,
       child: Container(
-        margin: const EdgeInsets.all(6),
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.all(4),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Row(
           children: [
             Expanded(
@@ -150,11 +161,11 @@ class MyChats extends StatelessWidget {
                 ),
                 child: TextField(
                   cursorColor: kprimary1,
-                  onChanged: (val) {},
+                  onChanged: (val) {
+                    controler.txtSeached.value = val;
+                  },
                   maxLines: 1,
                   minLines: 1,
-                  // scrollController: chatController.textFieldScrollController,
-                  //controller: chatController.txtMsg,
                   style: TextStyle(
                     color: Colors.grey.shade800,
                     fontWeight: FontWeight.w600,

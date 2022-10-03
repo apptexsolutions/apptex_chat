@@ -58,9 +58,15 @@ class StartChat extends StatelessWidget {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
 
+                // AppTexChat.Start_Chat_With(context,
+                //     receiver_name: "Sayed idrees",
+                //     receiver_id: otherUser,
+                //     receiver_profileUrl:
+                //         "https://sayed.skysoltech.com/images/syedidrees.jpg");
+
                 AppTexChat.Start_Chat_With(context,
-                    receiver_name: "Sayed idrees",
-                    receiver_id: otherUser,
+                    receiver_name: "Razza",
+                    receiver_id: otherUser + "3",
                     receiver_profileUrl:
                         "https://sayed.skysoltech.com/images/syedidrees.jpg");
               },
@@ -73,11 +79,8 @@ class StartChat extends StatelessWidget {
           Center(
             child: CustomButtonSquare(
               onTap: () {
-                //This will trasnfer you to the Chats
-
+                //This will trasnfer you to the Chats Page
                 AppTexChat.OpenMessages(context);
-
-                //new
               },
               buttonColor: Colors.green,
               buttonName: 'Open all of my Chats',
