@@ -1,21 +1,18 @@
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get_rx/get_rx.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 
 import '../Models/UserModel.dart';
 import 'contants.dart';
 
-class MessagesController extends GetxController {
-  RxList<ChatModel> _chats = <ChatModel>[].obs;
+class MessagesController{
+  final RxList<ChatModel> _chats = <ChatModel>[].obs;
   RxList<ChatModel> filteredChats = <ChatModel>[].obs;
-
   RxString txtSeached = "".obs;
-  String myuuid;
+  final String _myuuid;
   List<UserModel> users = <UserModel>[].obs;
 
-  MessagesController(this.myuuid) {
+  MessagesController(this._myuuid) {
     debounce(txtSeached, (callback) {
       filteredChats.value = [];
 
@@ -41,7 +38,7 @@ class MessagesController extends GetxController {
   bindAllChats() {
     _chats.bindStream(FirebaseFirestore.instance
         .collection(roomCollection)
-        .where("uuids", arrayContains: myuuid)
+        .where("uuids", arrayContains: _myuuid)
         .orderBy("lastMessageTimeStamp", descending: true)
         .snapshots()
         .map((event) {
@@ -59,13 +56,15 @@ class MessagesController extends GetxController {
     users.clear();
     for (ChatModel x in s) {
       for (UserModel y in x.users) {
-        if (y.uid != myuuid) {
+        if (y.uid != _myuuid) {
           users.add(y);
         }
       }
     }
-    print("TotaL Users : " + users.length.toString());
+    // print("TotaL Users : " + users.length.toString());
   }
+
+  get myID => _myuuid;
 
   // initSearch() {
   //   RxList<ChatModel> __chats = <ChatModel>[].obs;

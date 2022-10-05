@@ -33,7 +33,7 @@ class StartChat extends StatelessWidget {
   String otherUser = "xxx2";
 
   StartChat({Key? key}) : super(key: key) {
-    AppTexChat.Login_My_User(FullName: "Jamshed Khan Ali", your_uuid: myUUID);
+    AppTexChat.Login_My_User(FullName: "Jamshed Khan Ali", your_uuid: otherUser);
   }
 
   @override
@@ -58,17 +58,17 @@ class StartChat extends StatelessWidget {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
 
-                // AppTexChat.Start_Chat_With(context,
-                //     receiver_name: "Sayed idrees",
-                //     receiver_id: otherUser,
-                //     receiver_profileUrl:
-                //         "https://sayed.skysoltech.com/images/syedidrees.jpg");
-
                 AppTexChat.Start_Chat_With(context,
-                    receiver_name: "Razza",
-                    receiver_id: otherUser + "3",
+                    receiver_name: "Sayed idrees",
+                    receiver_id: myUUID,
                     receiver_profileUrl:
                         "https://sayed.skysoltech.com/images/syedidrees.jpg");
+
+                // AppTexChat.Start_Chat_With(context,
+                //     receiver_name: "Razza",
+                //     receiver_id: otherUser + "3",
+                //     receiver_profileUrl:
+                //         "https://sayed.skysoltech.com/images/syedidrees.jpg");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',

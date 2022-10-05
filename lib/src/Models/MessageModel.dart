@@ -8,6 +8,7 @@ class MessageModel {
   late String message;
   late String sendBy;
   late Timestamp timestamp;
+  late String? repliedTo;
 
   MessageModel();
 
@@ -18,5 +19,13 @@ class MessageModel {
     message = map["message"];
     sendBy = map["sendBy"];
     timestamp = map["timestamp"];
+    repliedTo = map['repliedTo'];
   }
+  // Map<String, dynamic> toJson() => {
+  //   'CODE':code,
+  //   'message':message,
+  //   'sendBy':sendBy,
+  //   'timestamp':timestamp,
+  //   'repliedTo':null
+  // };
 }
