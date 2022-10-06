@@ -234,14 +234,21 @@ class ChatScreen extends StatelessWidget {
           isMine: isMine,
           model: msg,
           profileUrl: url,
-          msgDate: msgDate,
+          msgDate: msgDate, 
           chatController: chatController,
           myID: myUID,
           title: title,
         ),
       );
     } else if (code == "IMG") {
-      return ImageBubble(isMine, msg.message, url, msgDate);
+      return SwipeToReply(
+          callback: (details) {
+            if (details.progress > 0.26) {
+              chatController.replyMessage(msg.uid);
+            }
+          },
+          isMine: isMine,
+          child: ImageBubble(isMine:isMine, message:msg.message, profileUrl:url, msgDate:msgDate));
     }
     return Container(
       width: 20,

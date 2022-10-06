@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../Controllers/chat_conrtroller.dart';
@@ -78,7 +77,7 @@ class RepliedToWidget extends StatelessWidget {
                                 fontSize: 13),
                           ),
                           Visibility(
-                            visible: showCloseButton,
+                            visible: showCloseButton && model.code == 'MSG',
                             child: GestureDetector(
                               onTap: () {
                                 chatController.replyMessage.value = null;
@@ -101,7 +100,7 @@ class RepliedToWidget extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           left: 16.0, right: 16.0, bottom: 8.0),
                       child: Text(
-                        model.message,
+                        model.code == 'MSG' ? model.message : 'Image',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -117,6 +116,47 @@ class RepliedToWidget extends StatelessWidget {
                 ),
               ),
             ),
+            Visibility(
+              visible: model.code == 'IMG',
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Container(
+                    width: 52,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: NetworkImage(model.message),
+                          fit: BoxFit.cover),
+                      color: isMine ? kprimary1 : kprimary2,
+                      borderRadius: BorderRadius.horizontal(
+                          right: showCloseButton
+                              ? Radius.circular(12)
+                              : Radius.circular(16)),
+                    ),
+                  ),
+                  Visibility(
+                    visible: showCloseButton,
+                    child: GestureDetector(
+                      onTap: () {
+                        chatController.replyMessage.value = null;
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey.shade300,
+                          maxRadius: 10,
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),
