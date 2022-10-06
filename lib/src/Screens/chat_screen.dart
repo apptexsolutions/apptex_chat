@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, use_key_in_widget_constructors, no_logic_in_create_state, non_constant_identifier_names
 
 import 'dart:io';
+import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Screens/full_screen_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -538,8 +539,11 @@ class RepliedToWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final model = chatController.messages
-        .firstWhere((element) => element.uid == messageId);
+    print(messageId);
+
+    MessageModel model = chatController.messages.firstWhere(
+        (element) => element.uid == messageId,
+        orElse: () => MessageModel());
     final bool isMine = model.sendBy == myID;
 
     return Container(

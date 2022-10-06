@@ -36,7 +36,7 @@ First you have to execute this line of code at the begining of the project where
  ```dart
 // here the Full name os the current USer Full name
 //and the uuid is the Firebase UID for that user.
-AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
+AppTexChat.initializeUser(FullName: "Sayed M. Idrees", your_uuid: "sayeduuid");
 ```
 
 
@@ -48,7 +48,7 @@ AppTexChat.initializeUser(FullName: "Jamshed Khan", your_uuid: myUUID);
 
  ```dart
 // Here you pass the BuildContext, and the reciever name and UUID
-  AppTexChat.startChat(context,  receiver_name: "Sayed idrees", receiver_id: otherUser);
+  AppTexChat.startChat(context,  receiver_name: "Shah Raza", receiver_id: "razauuid");
 ```
 
 

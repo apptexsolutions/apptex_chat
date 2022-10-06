@@ -29,11 +29,11 @@ class MyApp extends StatelessWidget {
 }
 
 class StartChat extends StatelessWidget {
-  String myUUID = "xxx1";
-  String otherUser = "xxx2";
-
   StartChat({Key? key}) : super(key: key) {
-    AppTexChat.Login_My_User(FullName: "Jamshed Khan Ali", your_uuid: otherUser);
+    AppTexChat.Login_My_User(
+        FullName: "Raza",
+        your_uuid: "raza",
+        profileUrl: "https://avatars.githubusercontent.com/u/63047096?v=4");
   }
 
   @override
@@ -45,22 +45,15 @@ class StartChat extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "A :     My User UID    : " + myUUID,
-          ),
-          Text(
-            "B : Other User UID    : " + otherUser,
-          ),
           const SizedBox(height: 29),
           Center(
             child: CustomButtonSquare(
               onTap: () {
                 //this required two uuids..
                 //current User uuid, and where you want to chat with.
-
                 AppTexChat.Start_Chat_With(context,
                     receiver_name: "Sayed idrees",
-                    receiver_id: myUUID,
+                    receiver_id: "sayed",
                     receiver_profileUrl:
                         "https://sayed.skysoltech.com/images/syedidrees.jpg");
 
