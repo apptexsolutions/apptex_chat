@@ -50,7 +50,7 @@ class MyChats extends StatelessWidget {
                       } else {
                         ChatModel model = controler.filteredChats[index];
                         UserModel other = model.users.firstWhere(
-                            (element) => element.uid != controler.myuuid);
+                            (element) => element.uid != controler.myID);
                         return model.lastMessage == null
                             ? Container()
                             : chat_tile(context, other, size, model);

@@ -32,6 +32,10 @@ class ChatController extends GetxController {
 
   ChatController(this.roomUID);
 
+  //Reply
+  Rxn<String> replyMessage = Rxn();
+  final FocusNode focusNode = FocusNode();
+
   @override
   void onInit() {
     scrollController.addListener(() {
@@ -96,7 +100,7 @@ class ChatController extends GetxController {
     //     body: msgInput["message"],
     //     token: userFCMToken,
     //     isBooking: false);
-
+    replyMessage.value = null;
     await firebaseFirestore
         .collection(roomCollection)
         .doc(roomUID)
