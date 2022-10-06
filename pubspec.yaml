@@ -1,6 +1,6 @@
 name: apptex_chat
 description: This Package is for making the chat system more easy and user friendly. and control chat features within one click.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/apptexsolutions/apptex_chat
 
 environment:
