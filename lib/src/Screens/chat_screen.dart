@@ -3,10 +3,12 @@
 import 'dart:io';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Widgets/custom_animation.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../Controllers/chat_conrtroller.dart';
 import '../Controllers/contants.dart';
@@ -242,6 +244,18 @@ class ChatScreen extends StatelessWidget {
       );
     } else if (code == "IMG") {
       return ImageBubble(isMine, msg.message, url, msgDate);
+    } else if (code == "MP3") {
+      //TODO design a container for Audio
+      return Container(
+        padding: const EdgeInsets.all(10),
+        child: const Text(
+          'Audio Message',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        color: kprimary1,
+      );
     }
     return Container(
       width: 20,
@@ -285,6 +299,21 @@ class ChatScreen extends StatelessWidget {
     chatController.addMessageSend(msginfoMap, fcm, myName);
   }
 
+  addVoice(File audio) async {
+    String name = myUID + Timestamp.now().millisecondsSinceEpoch.toString();
+    String aaddress =
+        await chatController.uploadFile(audio, "ApptexChat/$name.mp3");
+
+    var lastmsgTimeStamp = Timestamp.now();
+    Map<String, dynamic> msginfoMap = {
+      "message": aaddress,
+      "sendBy": myUID,
+      "CODE": "MP3",
+      "timestamp": lastmsgTimeStamp,
+    };
+    chatController.addMessageSend(msginfoMap, fcm, myName);
+  }
+
   typingArea(Size size) {
     return Stack(
       alignment: Alignment.bottomCenter,
@@ -316,6 +345,8 @@ class ChatScreen extends StatelessWidget {
                         onTap: () async {
                           if (chatController.micButtonPressed.value) {
                             chatController.micButtonPressed(false);
+                            await chatController.recorderController.stop(false);
+                            chatController.recorderController.reset();
                           } else {
                             File? ss = await chatController.pickMedia_only();
                             if (ss != null) {
@@ -365,7 +396,7 @@ class ChatScreen extends StatelessWidget {
                             ),
                             decoration: InputDecoration(
                                 hintText: chatController.micButtonPressed.value
-                                    ? "Recording..."
+                                    ? null
                                     : "Send a message..",
                                 hintStyle: TextStyle(
                                     color:
@@ -399,6 +430,25 @@ class ChatScreen extends StatelessWidget {
             ),
           ),
         ),
+        Obx(() => chatController.micButtonPressed.value
+            ? Positioned(
+                bottom: 20,
+                //right: 0,
+                child: AudioWaveforms(
+                    waveStyle: WaveStyle(
+                      //showDurationLabel: true,
+                      extendWaveform: true,
+                      backgroundColor: Colors.black,
+                      middleLineColor: Colors.transparent,
+                      durationLinesColor: kprimary1,
+                    ),
+                    //backgroundColor: Colors.yellow,
+
+                    //decoration: BoxDecoration(border: Border.all(width: 0)),
+                    size: Size(Get.width * 0.55, 40),
+                    recorderController: chatController.recorderController),
+              )
+            : const SizedBox()),
         Obx(
           () => chatController.showSendButton.value == false
               ? Positioned(
@@ -406,8 +456,13 @@ class ChatScreen extends StatelessWidget {
                   bottom: chatController.micButtonPressed.value ? -20 : 20,
                   child: chatController.micButtonPressed.value
                       ? GestureDetector(
-                          onTap: () {
-                            //TODO send voice message
+                          onTap: () async {
+                            chatController.micButtonPressed.value = false;
+                            final path = await chatController.recorderController
+                                .stop(false);
+                            chatController.recorderController.reset();
+                            // print('Path is:' + path!);
+                            addVoice(File(path!));
                           },
                           child: CustomAnimation(
                             child: Container(
@@ -424,10 +479,13 @@ class ChatScreen extends StatelessWidget {
                           ),
                         )
                       : GestureDetector(
-                          onLongPress: () {
+                          onLongPress: () async {
                             chatController.micButtonPressed.value = true;
                             chatController.focusNode.unfocus();
-                            //TODO start recording voice message
+
+                            var tempDir = await getTemporaryDirectory();
+                            await chatController.recorderController
+                                .record(tempDir.path + '/1');
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -442,7 +500,7 @@ class ChatScreen extends StatelessWidget {
                           ),
                         ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         ),
       ],
     );
