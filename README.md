@@ -25,8 +25,10 @@ First you have to execute this line of code at the begining of the project where
 
 
 ## Gallery
-
-<img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/Images/Screenshot%202022-10-06%20at%201.48.35%20PM.png" style="width:100px">
+<div style="display:flex">
+ <img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png" style="width:300px">
+ <img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png" style="width:300px">
+</div>
 
 
 ## Usage
@@ -40,7 +42,7 @@ First you have to execute this line of code at the begining of the project where
  ```dart
 // here the Full name os the current USer Full name
 //and the uuid is the Firebase UID for that user.
-AppTexChat.initializeUser(FullName: "Sayed M. Idrees", your_uuid: "sayeduuid");
+AppTexChat.initializeUser(FullName: "Sayed Idrees", your_uuid: "sayeduuid");
 ```
 
 
