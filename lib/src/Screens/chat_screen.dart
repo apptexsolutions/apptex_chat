@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Widgets/custom_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -159,7 +160,10 @@ class ChatScreen extends StatelessWidget {
               duration: const Duration(seconds: 1, milliseconds: 200),
               child: ListView.builder(
                   controller: chatController.scrollController,
-                  padding: const EdgeInsets.only(bottom: 60, top: 8),
+                  padding: EdgeInsets.only(
+                      bottom:
+                          chatController.replyMessage.value != null ? 130 : 60,
+                      top: 8),
                   itemCount: controller.messages.length,
                   reverse: true,
                   itemBuilder: (context, index) {
@@ -220,26 +224,22 @@ class ChatScreen extends StatelessWidget {
 
     if (code == "MSG") {
       return SwipeToReply(
-          key: UniqueKey(),
-          isRightSwipe: !isMine,
-          onRightSwipe: (details) {
-            chatController.focusNode.requestFocus();
+        callback: (details) {
+          if (details.progress > 0.26) {
             chatController.replyMessage(msg.uid);
-          },
-          onLeftSwipe: (details) {
-            chatController.focusNode.requestFocus();
-            chatController.replyMessage(msg.uid);
-          },
-          onHold: () {},
-          child: MessageBubble(
-            isMine: isMine,
-            model: msg,
-            profileUrl: url,
-            msgDate: msgDate,
-            chatController: chatController,
-            myID: myUID,
-            title: title,
-          ));
+          }
+        },
+        isMine: isMine,
+        child: MessageBubble(
+          isMine: isMine,
+          model: msg,
+          profileUrl: url,
+          msgDate: msgDate,
+          chatController: chatController,
+          myID: myUID,
+          title: title,
+        ),
+      );
     } else if (code == "IMG") {
       return ImageBubble(isMine, msg.message, url, msgDate);
     }
@@ -448,7 +448,6 @@ class ChatScreen extends StatelessWidget {
     );
   }
 }
-
 
 getdate(var msgDate) {
   String date = getChatDate(msgDate);
