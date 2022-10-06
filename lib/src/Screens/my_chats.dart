@@ -4,11 +4,11 @@ import 'package:apptex_chat/apptex_chat.dart';
 import 'package:apptex_chat/src/Controllers/messages_controller.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
-import 'package:apptex_chat/src/Screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 import '../Controllers/contants.dart';
+import '../Widgets/profile.dart';
 
 // ignore: must_be_immutable
 class MyChats extends StatelessWidget {
