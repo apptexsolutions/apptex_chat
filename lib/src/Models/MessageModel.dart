@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel {
   late String uid;
-  late String code; // IMG || MSG || AUDIO || VIDEO
+  late String code; // IMG || MSG || MP3 || VIDEO
   late String message;
   late String sendBy;
   late Timestamp timestamp;

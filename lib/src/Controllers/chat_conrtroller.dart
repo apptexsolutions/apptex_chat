@@ -4,6 +4,7 @@ import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Models/ChatModel.dart';
 import 'package:apptex_chat/src/Models/UserModel.dart';
 import 'package:apptex_chat/src/Screens/chat_screen.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +35,12 @@ class ChatController extends GetxController {
   Rxn<String> replyMessage = Rxn();
   final FocusNode focusNode = FocusNode();
 
+  //Voice Message
+  late final RecorderController recorderController;
+
   @override
   void onInit() {
+    recorderController = RecorderController();
     scrollController.addListener(() {
       if (scrollController.position.pixels > 360 && !isMaxScroll.value) {
         isMaxScroll.value = true;
@@ -106,7 +111,11 @@ class ChatController extends GetxController {
         .doc()
         .set(msgInput)
         .then((value) {
-      String msg = msgInput["CODE"] == "IMG" ? "Image" : msgInput["message"];
+      String msg = msgInput["CODE"] == "IMG"
+          ? "Image"
+          : msgInput["CODE"] == "IMG"
+              ? "Audio"
+              : msgInput["message"];
       Map<String, dynamic> lastMessageInfoMap = {
         "ReadByOther": false,
         "lastMessage": msg,

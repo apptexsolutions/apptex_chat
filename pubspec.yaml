@@ -18,6 +18,11 @@ dependencies:
   firebase_core: ^1.17.0
   firebase_storage: ^10.2.16
 
+  permission_handler: ^10.1.0
+  audio_waveforms: ^0.1.5+1
+  # audio_session: ^0.1.10
+  path_provider: ^2.0.11
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
