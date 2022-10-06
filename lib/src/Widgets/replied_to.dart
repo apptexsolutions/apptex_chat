@@ -130,8 +130,8 @@ class RepliedToWidget extends StatelessWidget {
                       color: isMine ? kprimary1 : kprimary2,
                       borderRadius: BorderRadius.horizontal(
                           right: showCloseButton
-                              ? Radius.circular(12)
-                              : Radius.circular(16)),
+                              ? const Radius.circular(12)
+                              : const Radius.circular(16)),
                     ),
                   ),
                   Visibility(

@@ -24,6 +24,12 @@ First you have to execute this line of code at the begining of the project where
 > You can place it on the Login page / Controller.
 
 
+## Gallery
+<div style="display:flex">
+ <img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png" style="width:300px">
+ <img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png" style="width:300px">
+</div>
+
 
 ## Usage
 
@@ -36,7 +42,7 @@ First you have to execute this line of code at the begining of the project where
  ```dart
 // here the Full name os the current USer Full name
 //and the uuid is the Firebase UID for that user.
-AppTexChat.initializeUser(FullName: "Sayed M. Idrees", your_uuid: "sayeduuid");
+AppTexChat.initializeUser(FullName: "Sayed Idrees", your_uuid: "sayeduuid");
 ```
 
 
