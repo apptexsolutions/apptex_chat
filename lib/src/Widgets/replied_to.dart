@@ -6,7 +6,7 @@ import '../Controllers/contants.dart';
 import '../Models/MessageModel.dart';
 
 class RepliedToWidget extends StatelessWidget {
-  RepliedToWidget(
+  const RepliedToWidget(
       {Key? key,
       required this.showCloseButton,
       required this.chatController,
@@ -26,8 +26,6 @@ class RepliedToWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    print(messageId);
-
     MessageModel model = chatController.messages.firstWhere(
         (element) => element.uid == messageId,
         orElse: () => MessageModel());
