@@ -26,8 +26,6 @@ class ChatController extends GetxController {
   RxBool showPadding = false.obs;
   RxBool showSendButton = false.obs;
   RxBool micButtonPressed = false.obs;
-  RxBool showLockAndSlide = false.obs;
-  RxBool isSuccessful = false.obs;
   RxBool isChatReady = false.obs;
 
   ChatController(this.roomUID);

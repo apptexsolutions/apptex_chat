@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Screens/full_screen_image.dart';
+import 'package:apptex_chat/src/Widgets/custom_animation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,94 +50,25 @@ class ChatScreen extends StatelessWidget {
                       topRight: Radius.circular(curve))),
               height: size.height * 0.874,
               width: size.width,
-              child: Obx(
-                () => Stack(
-                  children: [
-                    Positioned.fill(child: chatMessages()),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      left: 0,
-                      child: typingArea(size),
-                    ),
-                    Positioned(
-                      bottom: 80,
-                      right: 28,
-                      child: scrol_button(),
-                    ),
-                    if (chatController.showLockAndSlide.value)
-                      const Positioned(
-                        right: 80,
-                        bottom: 30,
-                        child: Text('< Slide to cancel'),
-                      ),
-                    if (chatController.showLockAndSlide.value)
-                      Positioned(
-                        right: 20,
-                        bottom: 22,
-                        child: lockContainer(),
-                      ),
-                  ],
-                ),
+              child: Stack(
+                children: [
+                  Positioned.fill(child: chatMessages()),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                    child: typingArea(size),
+                  ),
+                  Positioned(
+                    bottom: 80,
+                    right: 28,
+                    child: scrol_button(),
+                  ),
+                ],
               ),
             ),
           ),
           // Positioned(top: 0, child: myappbar()),
-        ],
-      ),
-    );
-  }
-
-  Container lockContainer() {
-    return Container(
-      height: 160,
-      width: 50,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Column(
-        children: [
-          DragTarget(
-            builder: (context, candidateData, rejectedData) {
-              return Center(
-                child: Obx(
-                  () => chatController.isSuccessful.value
-                      ? const SizedBox(
-                          height: 70,
-                          width: 70,
-                          child: Icon(
-                            Icons.lock,
-                            color: Colors.grey,
-                          ),
-                        )
-                      : const SizedBox(
-                          height: 70,
-                          width: 70,
-                          child: Icon(
-                            Icons.lock_open,
-                            color: Colors.grey,
-                          ),
-                        ),
-                ),
-              );
-            },
-            onWillAccept: (data) {
-              return true;
-            },
-            onAccept: (data) {
-              chatController.isSuccessful.value = true;
-              chatController.showLockAndSlide.value = false;
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Icon(
-            Icons.arrow_upward,
-            color: Colors.grey,
-          )
         ],
       ),
     );
@@ -351,82 +283,96 @@ class ChatScreen extends StatelessWidget {
   }
 
   typingArea(Size size) {
-    return Container(
-      width: size.width,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      decoration: BoxDecoration(
-          color: Colors.grey.shade200, borderRadius: BorderRadius.circular(24)),
+    return Stack(
       alignment: Alignment.bottomCenter,
-      child: Container(
-        margin: const EdgeInsets.all(6),
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Obx(
-          () => Column(
-            children: [
-              chatController.replyMessage.value != null
-                  ? RepliedToWidget(
-                      title: title,
-                      myID: myUID,
-                      showCloseButton: true,
-                      messageId: chatController.replyMessage.value!,
-                      chatController: chatController)
-                  : const SizedBox(),
-              Row(
+      children: [
+        Container(
+          width: size.width,
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(24)),
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            margin: const EdgeInsets.all(6),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Obx(
+              () => Column(
                 children: [
-                  GestureDetector(
-                    onTap: () async {
-                      File? ss = await chatController.pickMedia_only();
-                      if (ss != null) {
-                        addImage(ss);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: Icon(
-                        Icons.attach_file,
-                        color: Colors.grey.shade600,
-                        size: 27,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        focusNode: chatController.focusNode,
-                        cursorColor: kprimary1,
-                        onChanged: (val) {
-                          if (val.trim().isEmpty) {
-                            chatController.showPadding.value = false;
-                            chatController.showSendButton.value = false;
+                  chatController.replyMessage.value != null
+                      ? RepliedToWidget(
+                          title: title,
+                          myID: myUID,
+                          showCloseButton: true,
+                          messageId: chatController.replyMessage.value!,
+                          chatController: chatController)
+                      : const SizedBox(),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          if (chatController.micButtonPressed.value) {
+                            chatController.micButtonPressed(false);
                           } else {
-                            chatController.showPadding.value = true;
-                            chatController.showSendButton.value = true;
+                            File? ss = await chatController.pickMedia_only();
+                            if (ss != null) {
+                              addImage(ss);
+                            }
                           }
                         },
-                        maxLines: 4,
-                        minLines: 1,
-                        scrollController:
-                            chatController.textFieldScrollController,
-                        controller: chatController.txtMsg,
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontWeight: FontWeight.w600,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Icon(
+                            chatController.micButtonPressed.value
+                                ? Icons.delete
+                                : Icons.attach_file,
+                            color: chatController.micButtonPressed.value
+                                ? kprimary1
+                                : Colors.grey.shade600,
+                            size: 27,
+                          ),
                         ),
-                        decoration: InputDecoration(
-                            hintText: chatController.micButtonPressed.value
-                                ? ""
-                                : "Send a message..",
-                            hintStyle: TextStyle(
-                                color: Colors.grey.shade600.withOpacity(0.7)),
-                            border: InputBorder.none),
                       ),
-                    ),
-                  ),
-                  chatController.showSendButton.value
-                      ? GestureDetector(
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: TextField(
+                            readOnly: chatController.micButtonPressed.value,
+                            focusNode: chatController.focusNode,
+                            cursorColor: kprimary1,
+                            onChanged: (val) {
+                              if (val.trim().isEmpty) {
+                                chatController.showPadding.value = false;
+                                chatController.showSendButton.value = false;
+                              } else {
+                                chatController.showPadding.value = true;
+                                chatController.showSendButton.value = true;
+                              }
+                            },
+                            maxLines: 4,
+                            minLines: 1,
+                            scrollController:
+                                chatController.textFieldScrollController,
+                            controller: chatController.txtMsg,
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            decoration: InputDecoration(
+                                hintText: chatController.micButtonPressed.value
+                                    ? "Recording..."
+                                    : "Send a message..",
+                                hintStyle: TextStyle(
+                                    color:
+                                        Colors.grey.shade600.withOpacity(0.7)),
+                                border: InputBorder.none),
+                          ),
+                        ),
+                      ),
+                      if (chatController.showSendButton.value)
+                        GestureDetector(
                           onTap: () {
                             addMesage(true);
                           },
@@ -443,76 +389,59 @@ class ChatScreen extends StatelessWidget {
                             ),
                           ),
                         )
-                      : GestureDetector(
-                          onLongPress: () {
-                            chatController.micButtonPressed.value = true;
-                            chatController.showLockAndSlide.value = true;
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Obx(
+          () => chatController.showSendButton.value == false
+              ? Positioned(
+                  right: chatController.micButtonPressed.value ? -15 : 25,
+                  bottom: chatController.micButtonPressed.value ? -20 : 20,
+                  child: chatController.micButtonPressed.value
+                      ? GestureDetector(
+                          onTap: () {
+                            //TODO send voice message
                           },
-                          onLongPressCancel: () {
-                            chatController.micButtonPressed.value = false;
-                          },
-                          onLongPressEnd: (d) {
-                            // ignore: todo
-                            //TODO send message
-
-                            chatController.micButtonPressed.value = false;
-                          },
-                          child: LongPressDraggable(
-                            data: "mic",
-                            onDragStarted: () {
-                              chatController.micButtonPressed.value = true;
-                              chatController.showLockAndSlide.value = true;
-                            },
-                            onDragEnd: (_) {
-                              chatController.showLockAndSlide.value = false;
-                            },
-                            childWhenDragging: const SizedBox(),
-                            //axis: Axis.vertical,
-                            feedback: Container(
-                              height: chatController.micButtonPressed.value
-                                  ? 60
-                                  : 40,
-                              width: chatController.micButtonPressed.value
-                                  ? 60
-                                  : 40,
-                              padding: const EdgeInsets.all(5),
+                          child: CustomAnimation(
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: kprimary1,
                               ),
                               child: const Icon(
-                                Icons.mic,
-                                color: Colors.white,
-                              ),
-                            ),
-                            child: AnimatedContainer(
-                              duration: const Duration(
-                                milliseconds: 300,
-                              ),
-                              padding: const EdgeInsets.all(5),
-                              height: chatController.micButtonPressed.value
-                                  ? 60
-                                  : 40,
-                              width: chatController.micButtonPressed.value
-                                  ? 60
-                                  : 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: kprimary1,
-                              ),
-                              child: const Icon(
-                                Icons.mic,
+                                Icons.send,
                                 color: Colors.white,
                               ),
                             ),
                           ),
                         )
-                ],
-              ),
-            ],
-          ),
+                      : GestureDetector(
+                          onLongPress: () {
+                            chatController.micButtonPressed.value = true;
+                            chatController.focusNode.unfocus();
+                            //TODO start recording voice message
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: kprimary1,
+                            ),
+                            child: const Icon(
+                              Icons.mic,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                )
+              : SizedBox(),
         ),
-      ),
+      ],
     );
   }
 }
