@@ -9,3 +9,12 @@
 
 * UI Update
 * Functionality Added
+
+
+## 1.0.2
+
+* Chat Screen home Added
+* Audio animation in Chat screen added
+* Date and time is formated
+* chat master date inside chat is fixed
+* Minor bug fixes
