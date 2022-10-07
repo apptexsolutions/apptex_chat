@@ -5,11 +5,8 @@ import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Widgets/custom_animation.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
-
 import '../Controllers/chat_conrtroller.dart';
 import '../Controllers/contants.dart';
 import '../Widgets/image_bubble.dart';
@@ -243,7 +240,18 @@ class ChatScreen extends StatelessWidget {
         ),
       );
     } else if (code == "IMG") {
-      return ImageBubble(isMine, msg.message, url, msgDate);
+      return SwipeToReply(
+          callback: (details) {
+            if (details.progress > 0.26) {
+              chatController.replyMessage(msg.uid);
+            }
+          },
+          isMine: isMine,
+          child: ImageBubble(
+              isMine: isMine,
+              message: msg.message,
+              profileUrl: url,
+              msgDate: msgDate));
     } else if (code == "MP3") {
       //TODO design a container for Audio
       return Container(
@@ -256,10 +264,9 @@ class ChatScreen extends StatelessWidget {
         ),
         color: kprimary1,
       );
+    } else {
+      return Container();
     }
-    return Container(
-      width: 20,
-    );
   }
 
   addMesage(bool sendClicked) async {
@@ -482,8 +489,8 @@ class ChatScreen extends StatelessWidget {
                           onLongPress: () async {
                             chatController.micButtonPressed.value = true;
                             chatController.focusNode.unfocus();
-
-                            var tempDir = await getTemporaryDirectory();
+                            final Directory tempDir = Directory.systemTemp;
+                            // var tempDir = await getTemporaryDirectory();
                             await chatController.recorderController
                                 .record(tempDir.path + '/1');
                           },

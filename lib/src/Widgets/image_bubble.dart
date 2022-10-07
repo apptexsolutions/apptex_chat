@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../Controllers/contants.dart';
@@ -11,9 +10,7 @@ class ImageBubble extends StatelessWidget {
   final String message;
   final String profileUrl;
   final DateTime msgDate;
-  const ImageBubble(this.isMine, this.message, this.profileUrl, this.msgDate,
-      {Key? key})
-      : super(key: key);
+  const ImageBubble({Key? key, required this.isMine, required this.message, required this.profileUrl, required this.msgDate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
