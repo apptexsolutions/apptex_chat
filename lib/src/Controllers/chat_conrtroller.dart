@@ -40,7 +40,9 @@ class ChatController extends GetxController {
 
   @override
   void onInit() {
-    recorderController = RecorderController();
+    recorderController = RecorderController()
+      ..bitRate = 48000
+      ..sampleRate = 44100;
     scrollController.addListener(() {
       if (scrollController.position.pixels > 360 && !isMaxScroll.value) {
         isMaxScroll.value = true;
