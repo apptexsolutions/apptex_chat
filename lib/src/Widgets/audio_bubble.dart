@@ -86,8 +86,8 @@ class AudioBubble extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () async {
-                          chatController.playerController
-                              .preparePlayer(dir.path + '/' + name);
+                          // chatController.playerController
+                          //     .preparePlayer(dir.path + '/' + name);
                         },
                         icon: Obx(() {
                           return Icon(

@@ -467,17 +467,8 @@ class ChatScreen extends StatelessWidget {
                                 .stop(false)
                                 .then((path) {
                               chatController.recorderController.reset();
-                              chatController.playerController
-                                  .preparePlayer(path!)
-                                  .then((value) => {
-                                        chatController.playerController
-                                            .startPlayer()
-                                            .then((value) => chatController
-                                                .playerController
-                                                .stopPlayer())
-                                      });
 
-                              // addVoice(File(path), path.split('/').last);
+                              addVoice(File(path!), path.split('/').last);
                             });
                           },
                           child: CustomAnimation(
@@ -510,6 +501,7 @@ class ChatScreen extends StatelessWidget {
                                     .toString();
                             await chatController.recorderController
                                 .record(dir.path + '/$name');
+                            // print('EXISTING PATH :' + dir.path + '/$name');
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
