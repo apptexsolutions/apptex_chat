@@ -1,14 +1,17 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:apptex_chat/apptex_chat.dart';
-import 'package:example/custom_button_square.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
   AppTexChat.init();
+  AppTexChat.Login_My_User(
+      FullName: "Raza",
+      your_uuid: "raza",
+      profileUrl: "https://avatars.githubusercontent.com/u/63047096?v=4");
   runApp(const MyApp());
 }
 
@@ -29,59 +32,10 @@ class MyApp extends StatelessWidget {
 }
 
 class StartChat extends StatelessWidget {
-  StartChat({Key? key}) : super(key: key) {
-    AppTexChat.Login_My_User(
-        FullName: "Raza",
-        your_uuid: "raza",
-        profileUrl: "https://avatars.githubusercontent.com/u/63047096?v=4");
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 29),
-          Center(
-            child: CustomButtonSquare(
-              onTap: () {
-                //this required two uuids..
-                //current User uuid, and where you want to chat with.
-                AppTexChat.Start_Chat_With(context,
-                    receiver_name: "Sayed idrees",
-                    receiver_id: "sayed",
-                    receiver_profileUrl:
-                        "https://sayed.skysoltech.com/images/syedidrees.jpg");
-
-                // AppTexChat.Start_Chat_With(context,
-                //     receiver_name: "Razza",
-                //     receiver_id: otherUser + "3",
-                //     receiver_profileUrl:
-                //         "https://sayed.skysoltech.com/images/syedidrees.jpg");
-              },
-              buttonColor: Colors.green,
-              buttonName: 'Initiate Chat between User A and B',
-              width: size.width * 0.8,
-            ),
-          ),
-          const SizedBox(height: 29),
-          Center(
-            child: CustomButtonSquare(
-              onTap: () {
-                //This will trasnfer you to the Chats Page
-                AppTexChat.OpenMessages(context);
-              },
-              buttonColor: Colors.green,
-              buttonName: 'Open all of my Chats',
-              width: size.width * 0.8,
-            ),
-          )
-        ],
-      ),
-    );
+    return Scaffold(body: AppTexChat.UserChats());
   }
 }

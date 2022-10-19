@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
+import 'package:apptex_chat/src/Widgets/audio_bubble.dart';
 import 'package:apptex_chat/src/Widgets/custom_animation.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -62,11 +63,13 @@ class ChatScreen extends StatelessWidget {
                     left: 0,
                     child: typingArea(size),
                   ),
-                  Positioned(
-                    bottom: 80,
-                    right: 28,
-                    child: scrol_button(),
-                  ),
+                  Obx(() => Positioned(
+                        bottom: chatController.replyMessage.value == null
+                            ? 80
+                            : 148,
+                        right: 28,
+                        child: scrol_button(),
+                      )),
                 ],
               ),
             ),
@@ -78,21 +81,19 @@ class ChatScreen extends StatelessWidget {
   }
 
   scrol_button() {
-    return Obx(
-      () => Visibility(
-        visible: chatController.isMaxScroll.value,
-        child: GestureDetector(
-          onTap: () {
-            chatController.scrollToEnd();
-          },
-          child: CircleAvatar(
-            backgroundColor: kprimary2,
-            radius: 16,
-            child: Icon(
-              Icons.keyboard_double_arrow_down_sharp,
-              size: 20,
-              color: kprimary1,
-            ),
+    return Visibility(
+      visible: chatController.isMaxScroll.value,
+      child: GestureDetector(
+        onTap: () {
+          chatController.scrollToEnd();
+        },
+        child: CircleAvatar(
+          backgroundColor: kprimary2,
+          radius: 16,
+          child: Icon(
+            Icons.keyboard_double_arrow_down_sharp,
+            size: 20,
+            color: kprimary1,
           ),
         ),
       ),
@@ -254,15 +255,14 @@ class ChatScreen extends StatelessWidget {
               msgDate: msgDate));
     } else if (code == "MP3") {
       //TODO design a container for Audio
-      return Container(
-        padding: const EdgeInsets.all(10),
-        child: const Text(
-          'Audio Message',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        color: kprimary1,
+      return AudioBubble(
+        isMine: isMine,
+        model: msg,
+        profileUrl: url,
+        msgDate: msgDate,
+        chatController: chatController,
+        myID: myUID,
+        title: title,
       );
     } else {
       return Container();
@@ -292,25 +292,23 @@ class ChatScreen extends StatelessWidget {
   }
 
   addImage(File image) async {
-    String name = myUID + Timestamp.now().millisecondsSinceEpoch.toString();
-    String aaddress =
-        await chatController.uploadFile(image, "ApptexChat/$name.jpg");
-
     var lastmsgTimeStamp = Timestamp.now();
     Map<String, dynamic> msginfoMap = {
-      "message": aaddress,
+      "message": '',
       "sendBy": myUID,
       "CODE": "IMG",
       "timestamp": lastmsgTimeStamp,
     };
-    chatController.addMessageSend(msginfoMap, fcm, myName);
-  }
-
-  addVoice(File audio) async {
+    final id = await chatController.addMessageSend(msginfoMap, fcm, myName);
     String name = myUID + Timestamp.now().millisecondsSinceEpoch.toString();
     String aaddress =
-        await chatController.uploadFile(audio, "ApptexChat/$name.mp3");
+        await chatController.uploadFile(image, "ApptexChat/$name.jpg");
+    chatController.updateExistingMessage(id, {'message': aaddress});
+  }
 
+  addVoice(File audio, String name) async {
+    String aaddress =
+        await chatController.uploadFile(audio, "ApptexChat/$name");
     var lastmsgTimeStamp = Timestamp.now();
     Map<String, dynamic> msginfoMap = {
       "message": aaddress,
@@ -465,11 +463,22 @@ class ChatScreen extends StatelessWidget {
                       ? GestureDetector(
                           onTap: () async {
                             chatController.micButtonPressed.value = false;
-                            final path = await chatController.recorderController
-                                .stop(false);
-                            chatController.recorderController.reset();
-                            // print('Path is:' + path!);
-                            addVoice(File(path!));
+                            await chatController.recorderController
+                                .stop(false)
+                                .then((path) {
+                              chatController.recorderController.reset();
+                              chatController.playerController
+                                  .preparePlayer(path!)
+                                  .then((value) => {
+                                        chatController.playerController
+                                            .startPlayer()
+                                            .then((value) => chatController
+                                                .playerController
+                                                .stopPlayer())
+                                      });
+
+                              // addVoice(File(path), path.split('/').last);
+                            });
                           },
                           child: CustomAnimation(
                             child: Container(
@@ -487,12 +496,20 @@ class ChatScreen extends StatelessWidget {
                         )
                       : GestureDetector(
                           onLongPress: () async {
+                            if (!chatController
+                                .recorderController.hasPermission) {
+                              chatController.recorderController
+                                  .checkPermission();
+                            }
                             chatController.micButtonPressed.value = true;
                             chatController.focusNode.unfocus();
-                            final Directory tempDir = Directory.systemTemp;
-                            // var tempDir = await getTemporaryDirectory();
+
+                            String name = myUID +
+                                Timestamp.now()
+                                    .millisecondsSinceEpoch
+                                    .toString();
                             await chatController.recorderController
-                                .record(tempDir.path + '/1');
+                                .record(dir.path + '/$name');
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
