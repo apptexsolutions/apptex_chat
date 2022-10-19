@@ -48,6 +48,7 @@ class ChatController extends GetxController {
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC;
 
     playerController = PlayerController();
+
     scrollController.addListener(() {
       if (scrollController.position.pixels > 360 && !isMaxScroll.value) {
         isMaxScroll.value = true;
