@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../Controllers/chat_conrtroller.dart';
@@ -32,6 +33,7 @@ class RepliedToWidget extends StatelessWidget {
 
     return Container(
       width: size.width,
+      height: showCloseButton ? 62 : null,
       margin: showCloseButton
           ? const EdgeInsets.only(top: 8.0)
           : const EdgeInsets.all(4),
@@ -59,11 +61,12 @@ class RepliedToWidget extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(
-                          left: 16.0, right: 8, top: 8, bottom: 4),
+                      padding:
+                          const EdgeInsets.only(left: 16.0, right: 8, top: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -84,7 +87,7 @@ class RepliedToWidget extends StatelessWidget {
                               },
                               child: CircleAvatar(
                                 backgroundColor: Colors.grey.shade300,
-                                maxRadius: 10,
+                                maxRadius: 12,
                                 child: const Icon(
                                   Icons.close_rounded,
                                   size: 16,
@@ -101,7 +104,7 @@ class RepliedToWidget extends StatelessWidget {
                           left: 16.0, right: 16.0, bottom: 8.0),
                       child: Text(
                         model.code == 'MSG' ? model.message : 'Image',
-                        maxLines: 2,
+                        maxLines: showCloseButton ? 1 : 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: showCloseButton
@@ -122,10 +125,10 @@ class RepliedToWidget extends StatelessWidget {
                 alignment: Alignment.topRight,
                 children: [
                   Container(
-                    width: 52,
+                    width: 62,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: NetworkImage(model.message),
+                          image: CachedNetworkImageProvider(model.message),
                           fit: BoxFit.cover),
                       color: isMine ? kprimary1 : kprimary2,
                       borderRadius: BorderRadius.horizontal(

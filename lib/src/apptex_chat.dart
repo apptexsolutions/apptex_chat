@@ -17,7 +17,7 @@ class AppTexChat {
   static String? _profileURl;
   static MessagesController? _controler;
   static bool _started = false;
-  static Login_My_User(
+  static Future<void> Login_My_User(
       {required String FullName,
       required String your_uuid,
       String profileUrl = ""}) async {
@@ -40,6 +40,24 @@ class AppTexChat {
     }
   }
 
+  //Chats
+  static UserChats() {
+    if (!_isInited) {
+      // ignore: avoid_print
+      print(
+          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
+      return;
+    }
+    if (_uuid == null) {
+      // ignore: avoid_print
+      print(
+          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
+      return;
+    }
+
+    return MyChats(_controler!);
+  }
+
   static OpenMessages(BuildContext context) {
     if (!_isInited) {
       // ignore: avoid_print
@@ -58,7 +76,7 @@ class AppTexChat {
         context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
   }
 
-  static init({Color? primaryColor, Color? secondaryColor}) {
+  static Future<void> init({Color? primaryColor, Color? secondaryColor}) async {
     _isInited = true;
     if (primaryColor != null) kprimary1 = primaryColor;
     if (secondaryColor != null) kprimary5 = secondaryColor;

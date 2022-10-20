@@ -37,12 +37,18 @@ class ChatController extends GetxController {
 
   //Voice Message
   late final RecorderController recorderController;
+  late final PlayerController playerController;
 
   @override
   void onInit() {
     recorderController = RecorderController()
       ..bitRate = 48000
-      ..sampleRate = 44100;
+      ..sampleRate = 44100
+      ..androidEncoder = AndroidEncoder.aac
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC;
+
+    playerController = PlayerController();
+
     scrollController.addListener(() {
       if (scrollController.position.pixels > 360 && !isMaxScroll.value) {
         isMaxScroll.value = true;
@@ -98,7 +104,17 @@ class ChatController extends GetxController {
     return url;
   }
 
-  Future addMessageSend(
+  Future<void> updateExistingMessage(
+      String id, Map<String, dynamic> map) async {
+    firebaseFirestore
+        .collection(roomCollection)
+        .doc(roomUID)
+        .collection(chatMessagesCollection)
+        .doc(id)
+        .update(map);
+  }
+
+  Future<String> addMessageSend(
       Map<String, dynamic> msgInput, String userFCMToken, String myname) async {
     // notificationController.sendNotification(
     //     title: myname,
@@ -106,32 +122,39 @@ class ChatController extends GetxController {
     //     token: userFCMToken,
     //     isBooking: false);
     replyMessage.value = null;
-    await firebaseFirestore
+    String msg = '';
+    switch (msgInput["CODE"]) {
+      case 'IMG':
+        msg = 'Image';
+        break;
+      case 'MSG':
+        msg = msgInput["message"];
+        break;
+      case 'MP3':
+        msg = 'Audio';
+        break;
+      default:
+        msg = msgInput["message"];
+    }
+    final ref = firebaseFirestore
         .collection(roomCollection)
         .doc(roomUID)
         .collection(chatMessagesCollection)
-        .doc()
-        .set(msgInput)
-        .then((value) {
-      String msg = msgInput["CODE"] == "IMG"
-          ? "Image"
-          : msgInput["CODE"] == "IMG"
-              ? "Audio"
-              : msgInput["message"];
-      Map<String, dynamic> lastMessageInfoMap = {
-        "ReadByOther": false,
-        "lastMessage": msg,
-        "lastMessageTimeStamp": Timestamp.now(),
-        "lastMessageSendBy": msgInput["sendBy"]
-      };
+        .doc();
+    await ref.set(msgInput);
 
-      firebaseFirestore
-          .collection(roomCollection)
-          .doc(roomUID)
-          .update(lastMessageInfoMap);
+    Map<String, dynamic> lastMessageInfoMap = {
+      "ReadByOther": false,
+      "lastMessage": msg,
+      "lastMessageTimeStamp": Timestamp.now(),
+      "lastMessageSendBy": msgInput["sendBy"]
+    };
 
-      return value;
-    });
+    firebaseFirestore
+        .collection(roomCollection)
+        .doc(roomUID)
+        .update(lastMessageInfoMap);
+    return ref.id;
   }
 
   scrollToEnd() {

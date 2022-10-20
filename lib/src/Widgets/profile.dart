@@ -1,5 +1,6 @@
 
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../Controllers/contants.dart';
@@ -33,7 +34,7 @@ class ProfilePic extends StatelessWidget {
               height: imsix,
               color: Colors.grey.shade300,
               child: Image(
-                image: NetworkImage(
+                image: CachedNetworkImageProvider(
                   url,
                 ),
                 alignment: Alignment.center,
