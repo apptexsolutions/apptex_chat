@@ -37,7 +37,6 @@ class ChatController extends GetxController {
 
   //Voice Message
   late final RecorderController recorderController;
-  late final PlayerController playerController;
 
   @override
   void onInit() {
@@ -46,8 +45,6 @@ class ChatController extends GetxController {
       ..sampleRate = 44100
       ..androidEncoder = AndroidEncoder.aac
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC;
-
-    playerController = PlayerController();
 
     scrollController.addListener(() {
       if (scrollController.position.pixels > 360 && !isMaxScroll.value) {

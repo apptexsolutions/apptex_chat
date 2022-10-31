@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, use_key_in_widget_constructors, no_logic_in_create_state, non_constant_identifier_names
 
 import 'dart:io';
+import 'package:apptex_chat/src/Controllers/audiobubble_controller.dart';
 import 'package:apptex_chat/src/Models/MessageModel.dart';
 import 'package:apptex_chat/src/Widgets/audio_bubble.dart';
 import 'package:apptex_chat/src/Widgets/custom_animation.dart';
@@ -74,7 +75,6 @@ class ChatScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Positioned(top: 0, child: myappbar()),
         ],
       ),
     );
@@ -254,15 +254,23 @@ class ChatScreen extends StatelessWidget {
               profileUrl: url,
               msgDate: msgDate));
     } else if (code == "MP3") {
-      //TODO design a container for Audio
-      return AudioBubble(
+      return SwipeToReply(
+        callback: (details) {
+          if (details.progress > 0.26) {
+            chatController.replyMessage(msg.uid);
+          }
+        },
         isMine: isMine,
-        model: msg,
-        profileUrl: url,
-        msgDate: msgDate,
-        chatController: chatController,
-        myID: myUID,
-        title: title,
+        child: AudioBubble(
+          isMine: isMine,
+          model: msg,
+          profileUrl: url,
+          msgDate: msgDate,
+          chatController: chatController,
+          myID: myUID,
+          title: title,
+          audiobubbleController: AudiobubbleController(msg, PlayerController()),
+        ),
       );
     } else {
       return Container();
@@ -500,7 +508,7 @@ class ChatScreen extends StatelessWidget {
                                     .millisecondsSinceEpoch
                                     .toString();
                             await chatController.recorderController
-                                .record(dir.path + '/$name');
+                                .record(myTempDir.path + '/$name');
                             // print('EXISTING PATH :' + dir.path + '/$name');
                           },
                           child: Container(
