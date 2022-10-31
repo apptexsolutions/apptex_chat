@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 String roomCollection = "Chatrooms";
 String chatMessagesCollection = "Messages";
-Directory dir = Directory.systemTemp;
+Directory myTempDir = Directory.systemTemp;
 const Map<int, String> weekdayName = {
   1: "Monday",
   2: "Tuesday",

@@ -18,3 +18,9 @@
 * Date and time is formated
 * chat master date inside chat is fixed
 * Minor bug fixes
+
+## 1.0.3
+
+* Audio can now be send
+* UI Fixes
+* added more bugs to fix later
