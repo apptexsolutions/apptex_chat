@@ -167,7 +167,7 @@ class ChatController extends GetxController {
   }
 
   // ignore: non_constant_identifier_names
-  Future<File?> pickMedia_only() async {
+  Future<File?> pickMediaOnly() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
       imageQuality: 35,

@@ -361,7 +361,7 @@ class ChatScreen extends StatelessWidget {
                             await chatController.recorderController.stop(false);
                             chatController.recorderController.reset();
                           } else {
-                            File? ss = await chatController.pickMedia_only();
+                            File? ss = await chatController.pickMediaOnly();
                             if (ss != null) {
                               addImage(ss);
                             }
