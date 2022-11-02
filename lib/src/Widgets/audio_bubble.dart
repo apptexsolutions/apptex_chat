@@ -149,7 +149,7 @@ class AudioBubble extends StatelessWidget {
                                       audiobubbleController.playAudio();
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(5),
                                       decoration: const BoxDecoration(
                                           color: Colors.white,
                                           shape: BoxShape.circle),
