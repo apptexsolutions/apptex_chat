@@ -61,8 +61,11 @@ AppTexChat.initializeUser(FullName: "Sayed Idrees", your_uuid: "sayeduuid");
 **Step 3 : Open HomeScreen**
 
 1. To open all the connected chats just go to this chat screen.
-
-
+2. Use this line
+ ```dart
+// Here you pass the BuildContext to open upa all chats.
+  AppTexChat.OpenMessages(context);
+```
 
 
 

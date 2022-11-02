@@ -56,12 +56,6 @@ class StartChat extends StatelessWidget {
                     receiver_id: "Jamshed@gmail.com",
                     receiver_profileUrl:
                         "https://sayed.skysoltech.com/images/syedidrees.jpg");
-
-                // AppTexChat.Start_Chat_With(context,
-                //     receiver_name: "Razza",
-                //     receiver_id: otherUser + "3",
-                //     receiver_profileUrl:
-                //         "https://sayed.skysoltech.com/images/syedidrees.jpg");
               },
               buttonColor: Colors.green,
               buttonName: 'Initiate Chat between User A and B',
@@ -72,7 +66,6 @@ class StartChat extends StatelessWidget {
           Center(
             child: CustomButtonSquare(
               onTap: () {
-                //This will trasnfer you to the Chats Page
                 AppTexChat.OpenMessages(context);
               },
               buttonColor: Colors.green,
