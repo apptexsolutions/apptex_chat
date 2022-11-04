@@ -21,7 +21,7 @@ class MyChats extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: kWhite,
-      appBar: myappbar(size, context),
+      appBar: myappbar(size, controler.showBackButton, context),
       body: Column(
         children: [
           typingArea(size),
@@ -198,7 +198,7 @@ class MyChats extends StatelessWidget {
     );
   }
 
-  AppBar myappbar(Size size, BuildContext context) {
+  AppBar myappbar(Size size, bool hasBackButton, BuildContext context) {
     return AppBar(
       elevation: 0,
       backgroundColor: kWhite,

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:apptex_chat/src/Controllers/chat_conrtroller.dart';
 import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Controllers/messages_controller.dart';
@@ -17,12 +15,23 @@ class AppTexChat {
   static String? _profileURl;
   static MessagesController? _controler;
   static bool _started = false;
+  static bool _showBackButton = true;
+
+  static Future<void> init(
+      {Color? primaryColor,
+      Color? secondaryColor,
+      bool isShowBackButtonOnMyChats = true}) async {
+    _isInited = true;
+    if (primaryColor != null) kprimary1 = primaryColor;
+    if (secondaryColor != null) kprimary5 = secondaryColor;
+    _showBackButton = isShowBackButtonOnMyChats;
+  }
+
   static Future<void> Login_My_User(
       {required String FullName,
       required String your_uuid,
       String profileUrl = ""}) async {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
@@ -35,7 +44,7 @@ class AppTexChat {
       _name ??= FullName;
       _profileURl ??= profileUrl;
       _started = true;
-      _controler = MessagesController(your_uuid);
+      _controler = MessagesController(your_uuid, _showBackButton);
       _controler!.bindAllChats();
     }
   }
@@ -43,13 +52,11 @@ class AppTexChat {
   //Chats
   static UserChats() {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
@@ -60,13 +67,11 @@ class AppTexChat {
 
   static OpenMessages(BuildContext context) {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
@@ -76,20 +81,18 @@ class AppTexChat {
         context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
   }
 
-  static Widget GetMyMessages(BuildContext context) {
+  static Widget GetMyMessages() {
     if (!_isInited) {
-      // ignore: avoid_print
       String error =
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().";
 
       print(error);
       return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
         child: Text(error),
       );
     }
     if (_uuid == null) {
-      // ignore: avoid_print
-
       String error =
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'";
       print(error);
@@ -102,24 +105,16 @@ class AppTexChat {
     return MyChats(_controler!);
   }
 
-  static Future<void> init({Color? primaryColor, Color? secondaryColor}) async {
-    _isInited = true;
-    if (primaryColor != null) kprimary1 = primaryColor;
-    if (secondaryColor != null) kprimary5 = secondaryColor;
-  }
-
   static Start_Chat_With(BuildContext context,
       {required String receiver_name,
       required String receiver_id,
       String receiver_profileUrl = ""}) async {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
