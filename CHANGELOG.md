@@ -24,3 +24,21 @@
 * Audio can now be send
 * UI Fixes
 * added more bugs to fix later
+
+
+## 1.1.0
+
+* Images in the Github fixed
+
+## 1.1.1
+
+* Images removed from github
+
+## 1.1.3
+
+* Images tried to fix
+
+
+## 1.1.4
+
+* Scaffold will now be return to bypass direct navigation
