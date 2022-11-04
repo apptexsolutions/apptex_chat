@@ -72,6 +72,17 @@ class StartChat extends StatelessWidget {
               buttonName: 'Open all of my Chats',
               width: size.width * 0.8,
             ),
+          ),
+          const SizedBox(height: 29),
+          Center(
+            child: CustomButtonSquare(
+              onTap: () {
+                AppTexChat.OpenMessages(context);
+              },
+              buttonColor: Colors.green,
+              buttonName: 'Return My Chats in a Widget',
+              width: size.width * 0.8,
+            ),
           )
         ],
       ),
