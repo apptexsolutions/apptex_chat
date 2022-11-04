@@ -76,6 +76,32 @@ class AppTexChat {
         context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
   }
 
+  static Widget GetMyMessages(BuildContext context) {
+    if (!_isInited) {
+      // ignore: avoid_print
+      String error =
+          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().";
+
+      print(error);
+      return Container(
+        child: Text(error),
+      );
+    }
+    if (_uuid == null) {
+      // ignore: avoid_print
+
+      String error =
+          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'";
+      print(error);
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Text(error),
+      );
+    }
+
+    return MyChats(_controler!);
+  }
+
   static Future<void> init({Color? primaryColor, Color? secondaryColor}) async {
     _isInited = true;
     if (primaryColor != null) kprimary1 = primaryColor;
