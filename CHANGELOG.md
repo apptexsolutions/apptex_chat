@@ -40,5 +40,11 @@
 
 
 ## 1.1.4
-
 * Scaffold will now be return to bypass direct navigation
+
+
+## 1.1.5
+* Context parameter removed from  'GetMyChats' function
+* Back button controlled in initlize mthod.
+* minor Bug fixes
+
