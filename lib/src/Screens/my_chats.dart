@@ -24,7 +24,7 @@ class MyChats extends StatelessWidget {
       appBar: myappbar(size, context),
       body: Column(
         children: [
-          typingArea(size),
+          searchbar(size),
           const SizedBox(height: 20),
           Expanded(
             child: Obx(() {
@@ -68,7 +68,7 @@ class MyChats extends StatelessWidget {
       BuildContext context, UserModel other, Size size, ChatModel model) {
     return InkWell(
       onTap: () {
-        AppTexChat.Start_Chat_With(context,
+        AppTexChat.instance.Start_Chat_With(context,
             receiver_name: other.name,
             receiver_id: other.uid,
             receiver_profileUrl: other.profileUrl);
@@ -142,7 +142,7 @@ class MyChats extends StatelessWidget {
     );
   }
 
-  typingArea(Size size) {
+  searchbar(Size size) {
     return Container(
       width: size.width,
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),

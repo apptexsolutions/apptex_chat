@@ -5,10 +5,11 @@ import 'package:get/get_rx/get_rx.dart';
 import '../Models/UserModel.dart';
 import 'contants.dart';
 
-class MessagesController{
+class MessagesController {
   final RxList<ChatModel> _chats = <ChatModel>[].obs;
   RxList<ChatModel> filteredChats = <ChatModel>[].obs;
   RxString txtSeached = "".obs;
+
   final String _myuuid;
   List<UserModel> users = <UserModel>[].obs;
 
@@ -35,10 +36,10 @@ class MessagesController{
     });
   }
 
-  bindAllChats() {
+  bindAllChats(String myuuid) {
     _chats.bindStream(FirebaseFirestore.instance
         .collection(roomCollection)
-        .where("uuids", arrayContains: _myuuid)
+        .where("uuids", arrayContains: myuuid)
         .orderBy("lastMessageTimeStamp", descending: true)
         .snapshots()
         .map((event) {

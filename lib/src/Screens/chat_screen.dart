@@ -475,7 +475,6 @@ class ChatScreen extends StatelessWidget {
                                 .stop(false)
                                 .then((path) {
                               chatController.recorderController.reset();
-
                               addVoice(File(path!), path.split('/').last);
                             });
                           },
@@ -493,36 +492,38 @@ class ChatScreen extends StatelessWidget {
                             ),
                           ),
                         )
-                      : GestureDetector(
-                          onLongPress: () async {
-                            if (!chatController
-                                .recorderController.hasPermission) {
-                              chatController.recorderController
-                                  .checkPermission();
-                            }
-                            chatController.micButtonPressed.value = true;
-                            chatController.focusNode.unfocus();
+                      : !chatController.isAllowedVoice
+                          ? Container()
+                          : GestureDetector(
+                              onLongPress: () async {
+                                if (!chatController
+                                    .recorderController.hasPermission) {
+                                  chatController.recorderController
+                                      .checkPermission();
+                                }
+                                chatController.micButtonPressed.value = true;
+                                chatController.focusNode.unfocus();
 
-                            String name = myUID +
-                                Timestamp.now()
-                                    .millisecondsSinceEpoch
-                                    .toString();
-                            await chatController.recorderController
-                                .record(myTempDir.path + '/$name');
-                            // print('EXISTING PATH :' + dir.path + '/$name');
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: kprimary1,
+                                String name = myUID +
+                                    Timestamp.now()
+                                        .millisecondsSinceEpoch
+                                        .toString();
+                                await chatController.recorderController
+                                    .record(myTempDir.path + '/$name');
+                                // print('EXISTING PATH :' + dir.path + '/$name');
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: kprimary1,
+                                ),
+                                child: const Icon(
+                                  Icons.mic,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.mic,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
                 )
               : const SizedBox(),
         ),

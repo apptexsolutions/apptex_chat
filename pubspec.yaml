@@ -19,6 +19,7 @@ dependencies:
   firebase_storage: ^10.2.16
   audio_waveforms: ^0.1.5
   cached_network_image: ^3.2.2
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

@@ -28,8 +28,8 @@ class ChatController extends GetxController {
   RxBool showSendButton = false.obs;
   RxBool micButtonPressed = false.obs;
   RxBool isChatReady = false.obs;
-
-  ChatController(this.roomUID);
+  bool isAllowedVoice;
+  ChatController(this.roomUID, this.isAllowedVoice);
 
   //Reply
   Rxn<String> replyMessage = Rxn();
