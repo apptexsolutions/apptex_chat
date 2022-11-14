@@ -1,0 +1,87 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.238.1/containers/javascript-node
+{
+	"name": "Node.js",
+	"build": {
+		"dockerfile": "Dockerfile",
+		// Update 'VARIANT' to pick a Node version: 18, 16, 14.
+		// Append -bullseye or -buster to pin to an OS version.
+		// Use -bullseye variants on local arm64/Apple Silicon.
+		"args": {
+			"VARIANT": "16-bullseye"
+		}
+	},
+	"extensions": [
+		"Dart-Code.dart-code",
+		"Dart-Code.flutter",
+		"pkief.material-icon-theme",
+		"andrsdc.base16-themes",
+		"github.copilot",
+		"bendixma.dart-data-class-generator"
+	],
+	"settings": {
+		"workbench.iconTheme": "material-icon-theme",
+		"files.autoSave": "afterDelay",
+		"editor.minimap.enabled": false,
+		"workbench.colorTheme": "Base16 Light Colors",
+		"editor.bracketPairColorization.enabled": true,
+		"workbench.colorCustomizations": {
+			"editorBracketHighlight.foreground1": "#ff40cc",
+			"editorBracketHighlight.foreground2": "#ff9318",
+			"editorBracketHighlight.foreground3": "#d448ff",
+			"editorBracketHighlight.foreground4": "#47edff",
+			"editorBracketHighlight.foreground5": "#10ff37",
+			"editorBracketHighlight.foreground6": "#4d5fff",
+			"editorBracketHighlight.unexpectedBracket.foreground": "#fffb00",
+		},
+		"editor.tokenColorCustomizations": {
+			"textMateRules": [
+				{
+				  "scope": "string",
+				  "settings": {
+					"foreground": "#1ca00a"
+				  }
+				}
+			  ]
+			
+		},
+		"editor.quickSuggestions": {
+			"other": true,
+			"comments": false,
+			"strings": false
+		},
+		"javascript.updateImportsOnFileMove.enabled": "always",
+		"editor.unicodeHighlight.ambiguousCharacters": false,
+		"dart.previewFlutterUiGuides": true,
+		"dart.previewFlutterUiGuidesCustomTracking": true,
+		"dart.devToolsTheme": "light",
+		"dart.renameFilesWithClasses": "prompt",
+		"dart.flutterHotReloadOnSave": "all",
+		"dart.hotReloadOnSave": "all",
+		"dart.hotReloadProgress": "statusBar",
+		"dart.previewHotReloadOnSaveWatcher": true,
+		"editor.inlineSuggest.enabled": true,
+	}
+	// // Configure tool-specific properties.
+	// "customizations": {
+	// 	// Configure properties specific to VS Code.
+	// 	"vscode": {
+	// 		// Add the IDs of extensions you want installed when the container is created.
+	// "extensions": [
+	// 	"dbaeumer.vscode-eslint"
+	// ]
+	// 	}
+	// },
+	// // Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// // "forwardPorts": [],
+	// // Use 'postCreateCommand' to run commands after the container is created.
+	// // "postCreateCommand": "yarn install",
+	// // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "node",
+	// "features": {
+	// 	"docker-in-docker": "20.10",
+	// 	"git": "os-provided",
+	// 	"github-cli": "latest",
+	// 	"powershell": "7.1"
+	// }
+}
