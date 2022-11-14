@@ -63,12 +63,11 @@ class AppTexChat {
     _uuid = your_uuid;
     _name = FullName;
     _profileURl = profileUrl;
-    _controler = MessagesController(your_uuid, true);
+    _controler = MessagesController(your_uuid, false);
     _controler!.bindAllChats(your_uuid);
   }
 
-  //Chats
-  UserChats() {
+  OpenMessages(BuildContext context, {bool isShowBackButton = false}) {
     if (!_isInited) {
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
@@ -79,27 +78,12 @@ class AppTexChat {
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
     }
-
-    return MyChats(_controler!);
-  }
-
-  OpenMessages(BuildContext context) {
-    if (!_isInited) {
-      print(
-          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
-      return;
-    }
-    if (_uuid == null) {
-      print(
-          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
-      return;
-    }
-
+    _controler!.showBackButton = isShowBackButton;
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
   }
 
-  Widget GetMyMessages(BuildContext context) {
+  Widget GetMyMessages(BuildContext context, {bool isShowBackButton = false}) {
     if (!_isInited) {
       String error =
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().";
@@ -119,7 +103,7 @@ class AppTexChat {
         child: Text(error),
       );
     }
-
+    _controler!.showBackButton = isShowBackButton;
     return MyChats(_controler!);
   }
 
