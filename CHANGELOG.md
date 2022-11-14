@@ -48,3 +48,10 @@
 * Back button controlled in initlize mthod.
 * minor Bug fixes
 
+
+## 1.2.0
+* Apptex chats are now fully ready.
+* All Features Operational
+* Controllers are changed to Instances.
+* Permissions based feature control
+* [Bug fixes]

@@ -26,8 +26,8 @@ First you have to execute this line of code at the begining of the project where
 
 ## Gallery
 <div style="display:flex">
-<code><img height="400px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png"></code>
-<code><img height="400px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png"></code>
+<code><img height="500px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png"></code>
+<code><img height="500px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png"></code>
 </div>
 
 
@@ -40,34 +40,64 @@ First you have to execute this line of code at the begining of the project where
  3. Inilize firebase in the main function.
 
 **Step 2 : Initialize AppTexChat**
+ 1. Call AppTexChat.init(); in main(); 
+ For Example
  ```dart
-// here the Full name os the current USer Full name
-//and the uuid is the Firebase UID for that user.
-AppTexChat.initializeUser(FullName: "Sayed Idrees", your_uuid: "sayeduuid");
+//This is your main function
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
+  AppTexChat.init();
+  runApp(const MyApp());
+}
 ```
 
 
-**Step 3 : Start Chat with some user**
-
-1. Just Call this function
-2. Boom! That's it. Chat Started.
-
-
+**Step 3 : Login your current User at Login State Changes**
+1. When the Auth User is Signed-up or Logged in, Use it there.
+For example
  ```dart
-// Here you pass the BuildContext, and the reciever name and UUID
-  AppTexChat.startChat(context,  receiver_name: "Shah Raza", receiver_id: "razauuid");
+// Here you can set the current user to the Apptex chat, ProfileURl is Optional
+    AppTexChat.instance.Login_My_User(
+                      FullName: "{Currect User Name}",
+                      your_uuid: "{uuid}",
+                      profileUrl: "{profile url}");
 ```
 
 
-**Step 3 : Open HomeScreen**
+**Step 4 : Start Chat with some user**
 
-1. To open all the connected chats just go to this chat screen.
+1. Just Call this function to start chat.
+2. Ka-Bo0om! That's it. Chat Started.
+
+
+ ```dart
+// Here you pass the BuildContext, and the reciever name and UUID to which user you want to talk to.
+   AppTexChat.instance.Start_Chat_With(context,
+                    receiver_name: other.name,
+                    receiver_id: other.uuid,
+                    receiver_profileUrl: other.url);
+```
+
+
+**Step 5 : Open HomeScreen**
+
+1. To open all chats connected to that specific user, just go to this chat screen.
 2. Use this line
  ```dart
 // Here you pass the BuildContext to open upa all chats.
-  AppTexChat.OpenMessages(context);
+  AppTexChat.instance.OpenMessages(context);
 ```
 
+
+**Optional : Get AllChats Widget**
+
+1. To get the Widget for all of the chats.
+2. Use this line
+ ```dart
+// Here you pass the BuildContext to open upa all chats.
+  AppTexChat.instance.GetMyMessages(context);
+```
 
 
 

@@ -57,7 +57,7 @@ class StartChat extends StatelessWidget {
           Center(
             child: CustomButtonSquare(
               onTap: () {
-                AppTexChat.instance.OpenMessages(context);
+                AppTexChat.instance.GetMyMessages(context);
               },
               buttonColor: Colors.green,
               buttonName: 'Return My Chats in a Widget',
