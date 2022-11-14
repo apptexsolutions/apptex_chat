@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:apptex_chat/src/Controllers/chat_conrtroller.dart';
 import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Controllers/messages_controller.dart';
@@ -9,87 +7,94 @@ import 'package:apptex_chat/src/Screens/my_chats.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AppTexChat {
+  AppTexChat._();
+  static final AppTexChat _instance = AppTexChat._();
+  static AppTexChat get instance => _instance;
+
   static String? _uuid;
   static bool _isInited = false;
   static String? _name;
   static String? _profileURl;
   static MessagesController? _controler;
-  static bool _started = false;
-  static Future<void> Login_My_User(
+  static bool _isStarted = false;
+  static bool _isVoicePermissionAccepted = false;
+
+  static Future<void> init({Color? primaryColor, Color? secondaryColor}) async {
+    _isInited = true;
+    if (primaryColor != null) kprimary1 = primaryColor;
+    if (secondaryColor != null) kprimary5 = secondaryColor;
+  }
+
+  requestPermission() async {
+    PermissionStatus status = await Permission.microphone.request();
+    if (status.isDenied) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<void> Login_My_User(
       {required String FullName,
       required String your_uuid,
       String profileUrl = ""}) async {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
-          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
+          "ErrorCode XID_051: Please Call 'ApptexChat.instance.Init()' in the main() function above runApp().");
       return;
     }
+    bool permissionStatus = await requestPermission();
+    if (!permissionStatus) {
+      print("-- Permission Denied");
+      _isVoicePermissionAccepted = false;
+    } else {
+      print("-- Permission Accepted");
+      _isVoicePermissionAccepted = true;
+    }
 
-    if (!_started) {
+    if (!_isStarted) {
       await Firebase.initializeApp();
-
-      _uuid ??= your_uuid;
-      _name ??= FullName;
-      _profileURl ??= profileUrl;
-      _started = true;
-      _controler = MessagesController(your_uuid);
-      _controler!.bindAllChats();
+      _isStarted = true;
     }
+
+    _uuid = your_uuid;
+    _name = FullName;
+    _profileURl = profileUrl;
+    _controler = MessagesController(your_uuid, false);
+    _controler!.bindAllChats(your_uuid);
   }
 
-  //Chats
-  static UserChats() {
+  OpenMessages(BuildContext context, {bool isShowBackButton = false}) {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
     }
-
-    return MyChats(_controler!);
-  }
-
-  static OpenMessages(BuildContext context) {
-    if (!_isInited) {
-      // ignore: avoid_print
-      print(
-          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
-      return;
-    }
-    if (_uuid == null) {
-      // ignore: avoid_print
-      print(
-          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
-      return;
-    }
-
+    _controler!.showBackButton = isShowBackButton;
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
   }
 
-  static Widget GetMyMessages(BuildContext context) {
+  Widget GetMyMessages(BuildContext context, {bool isShowBackButton = false}) {
     if (!_isInited) {
-      // ignore: avoid_print
       String error =
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().";
 
       print(error);
-      return Container(
-        child: Text(error),
+      return Text(
+        error,
+        style: myStyle(12, false, color: Colors.red),
       );
     }
     if (_uuid == null) {
-      // ignore: avoid_print
-
       String error =
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'";
       print(error);
@@ -98,28 +103,20 @@ class AppTexChat {
         child: Text(error),
       );
     }
-
+    _controler!.showBackButton = isShowBackButton;
     return MyChats(_controler!);
   }
 
-  static Future<void> init({Color? primaryColor, Color? secondaryColor}) async {
-    _isInited = true;
-    if (primaryColor != null) kprimary1 = primaryColor;
-    if (secondaryColor != null) kprimary5 = secondaryColor;
-  }
-
-  static Start_Chat_With(BuildContext context,
+  Start_Chat_With(BuildContext context,
       {required String receiver_name,
       required String receiver_id,
       String receiver_profileUrl = ""}) async {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
@@ -155,11 +152,13 @@ class AppTexChat {
           .doc(chatRoomID)
           .set(model.toMap());
 
-      ChatController controller = ChatController(chatRoomID);
+      ChatController controller =
+          ChatController(chatRoomID, _isVoicePermissionAccepted);
       controller.startChat(context, model, _uuid!);
     } else {
       ChatModel model = ChatModel.fromMap(ss);
-      ChatController controller = ChatController(chatRoomID);
+      ChatController controller =
+          ChatController(chatRoomID, _isVoicePermissionAccepted);
 
       model.users.clear();
 
@@ -179,7 +178,7 @@ class AppTexChat {
     }
   }
 
-  static String _getGenericuuid(String userBUuid) {
+  String _getGenericuuid(String userBUuid) {
     String chatRoomID = "";
     if (_uuid!.compareTo(userBUuid) == 1) {
       chatRoomID = _uuid! + "" + userBUuid;
@@ -187,14 +186,5 @@ class AppTexChat {
       chatRoomID = userBUuid + "" + _uuid!;
     }
     return chatRoomID;
-  }
-}
-
-class ChatHome extends StatelessWidget {
-  const ChatHome({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }
