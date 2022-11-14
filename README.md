@@ -26,9 +26,10 @@ First you have to execute this line of code at the begining of the project where
 
 ## Gallery
 <div style="display:flex">
- <img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png" style="width:300px">
- <img src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png" style="width:300px">
+<code><img height="400px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png"></code>
+<code><img height="400px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png"></code>
 </div>
+
 
 
 ## Usage

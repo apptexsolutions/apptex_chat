@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:apptex_chat/src/Controllers/chat_conrtroller.dart';
 import 'package:apptex_chat/src/Controllers/contants.dart';
 import 'package:apptex_chat/src/Controllers/messages_controller.dart';
@@ -44,7 +42,6 @@ class AppTexChat {
       required String your_uuid,
       String profileUrl = ""}) async {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'ApptexChat.instance.Init()' in the main() function above runApp().");
       return;
@@ -66,20 +63,18 @@ class AppTexChat {
     _uuid = your_uuid;
     _name = FullName;
     _profileURl = profileUrl;
-    _controler = MessagesController(your_uuid);
+    _controler = MessagesController(your_uuid, true);
     _controler!.bindAllChats(your_uuid);
   }
 
   //Chats
   UserChats() {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
@@ -90,13 +85,11 @@ class AppTexChat {
 
   OpenMessages(BuildContext context) {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;
@@ -108,7 +101,6 @@ class AppTexChat {
 
   Widget GetMyMessages(BuildContext context) {
     if (!_isInited) {
-      // ignore: avoid_print
       String error =
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().";
 
@@ -119,8 +111,6 @@ class AppTexChat {
       );
     }
     if (_uuid == null) {
-      // ignore: avoid_print
-
       String error =
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'";
       print(error);
@@ -138,13 +128,11 @@ class AppTexChat {
       required String receiver_id,
       String receiver_profileUrl = ""}) async {
     if (!_isInited) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
       return;
     }
     if (_uuid == null) {
-      // ignore: avoid_print
       print(
           "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
       return;

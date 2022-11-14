@@ -12,8 +12,9 @@ class MessagesController {
 
   final String _myuuid;
   List<UserModel> users = <UserModel>[].obs;
+  bool showBackButton;
 
-  MessagesController(this._myuuid) {
+  MessagesController(this._myuuid, this.showBackButton) {
     debounce(txtSeached, (callback) {
       filteredChats.value = [];
 
