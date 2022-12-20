@@ -1,6 +1,6 @@
 name: apptex_chat
 description: This Package is for making the chat system more easy and user friendly. and control chat features within one click.
-version: 1.2.0
+version: 1.2.1
 homepage: https://github.com/apptexsolutions/apptex_chat
 
 environment:
@@ -14,9 +14,12 @@ dependencies:
   #Dependencies
   get: ^4.6.1
   image_picker: ^0.8.5
-  cloud_firestore: ^3.1.15
-  firebase_core: ^1.17.0
-  firebase_storage: ^10.2.16
+
+  # Firebase Dependencies
+  firebase_core:
+  cloud_firestore:
+  firebase_storage:
+
   audio_waveforms: ^0.1.5
   cached_network_image: ^3.2.2
   permission_handler: ^10.2.0

@@ -55,3 +55,7 @@
 * Controllers are changed to Instances.
 * Permissions based feature control
 * [Bug fixes]
+
+## 1.2.1
+* Firebase dependencies updated
+* Documentation Bug fixes
