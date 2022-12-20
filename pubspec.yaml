@@ -16,9 +16,9 @@ dependencies:
   image_picker: ^0.8.5
 
   # Firebase Dependencies
-  firebase_core: ^2.1.1
-  cloud_firestore: ^4.2.0
-  firebase_storage: ^11.0.7
+  firebase_core:
+  cloud_firestore:
+  firebase_storage:
 
   audio_waveforms: ^0.1.5
   cached_network_image: ^3.2.2
