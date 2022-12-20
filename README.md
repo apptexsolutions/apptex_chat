@@ -17,11 +17,6 @@ Ofcourse, a chat screen to chat. No explaination needed but, Yes you can change 
 7. Push Notifications
 8. All Chatting Features
 
-## Getting started
-
-Okay so its not that complicated.
-First you have to execute this line of code at the begining of the project where you get the user detials..
-> You can place it on the Login page / Controller.
 
 
 ## Gallery
@@ -115,9 +110,8 @@ For example
 More is about to Come:
 
 **Features that will be added later:**
-1. Voice Notes
-2. Push Notifications
-3. Make it for web
+1. Push Notifications
+2. Make it for web
 
 
 ## Frameworks Used
