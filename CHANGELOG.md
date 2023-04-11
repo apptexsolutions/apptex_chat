@@ -59,3 +59,7 @@
 ## 1.2.1
 * Firebase dependencies updated
 * Documentation Bug fixes
+
+## 1.2.2
+* Statemanagement trasfered to Provider
+* UI Fixes

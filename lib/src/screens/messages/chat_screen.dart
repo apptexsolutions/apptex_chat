@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../models/conversation_model.dart';
 import '../../models/message_model.dart';
-import '../../widgets/image_bubble.dart';
-import '../../widgets/message_bubble.dart';
+import '../../myWidgets/image_bubble.dart';
+import '../../myWidgets/message_bubble.dart';
 import 'chat_view_model.dart';
 
 class ChatScreen extends StatelessWidget {

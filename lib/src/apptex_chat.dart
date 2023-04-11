@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ntp/ntp.dart';
-
 import 'core/services/chat_services.dart';
 import 'core/services/db_services.dart';
 import 'models/conversation_model.dart';

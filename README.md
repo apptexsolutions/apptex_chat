@@ -19,7 +19,7 @@ Add the following dependency to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  apptex_chat: ^1.2.1
+  apptex_chat: ^1.2.2
 ```
 
 Then, run `flutter pub get` to install the package.
