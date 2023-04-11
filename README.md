@@ -6,6 +6,26 @@ It has all the Users which are recently contacted..
 Chat Screen : 
 Ofcourse, a chat screen to chat. No explaination needed but, Yes you can change colors and themes
 
+
+## Platform Tested : Result OK
+
+| Android | iOS | macOS | Web | Linux | Windows |
+|---------|-----|-------|-----|-------|---------|
+| ✔       | ✔   | :x:   |  ✔  | :x:   | :x:     |
+
+## Installation
+
+Add the following dependency to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  apptex_chat: ^1.2.1
+```
+
+Then, run `flutter pub get` to install the package.
+
+
+
 ## Features
 
 1. Easy to use

@@ -1,86 +1,119 @@
-import 'package:flutter/material.dart';
-
-import '../Controllers/contants.dart';
-import '../Screens/chat_screen.dart';
-import '../Screens/full_screen_image.dart';
-import 'profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import '../core/utils/utils.dart';
+import '../models/conversation_model.dart';
+import '../models/message_model.dart';
 
 class ImageBubble extends StatelessWidget {
   final bool isMine;
-  final String message;
-  final String profileUrl;
-  final DateTime msgDate;
-  const ImageBubble(
-      {Key? key,
-      required this.isMine,
-      required this.message,
-      required this.profileUrl,
-      required this.msgDate})
-      : super(key: key);
+  final MessageModel model;
+  final ChatUserModel currentUser;
+  final ChatUserModel otherUSer;
+  const ImageBubble({
+    Key? key,
+    required this.isMine,
+    required this.model,
+    required this.currentUser,
+    required this.otherUSer,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double radius = 10;
+
     return Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment:
             isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isMine) Container(width: 3),
-          if (!isMine) ProfilePic(profileUrl, size: 30),
-          if (isMine) getdate(msgDate),
           IntrinsicWidth(
-              child: Hero(
-            tag: message,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FullScreenImage(
-                              imgUrl: message,
-                            )));
-              },
               child: Container(
-                // height: boxSize,
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: MediaQuery.of(context).size.width * 0.7,
-                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: isMine ? kprimary1 : kprimary2,
-                  borderRadius: _borderRaduis(),
-                ),
-                child: message.isEmpty
-                    ? Center(
-                        child: SizedBox(
-                            width: 28,
-                            height: 28,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 3,
-                              color: isMine ? Colors.white : kprimary1,
-                            )),
-                      )
-                    : ClipRRect(
-                        borderRadius: _borderRaduis(),
-                        child: CachedNetworkImage(
-                          imageUrl: message,
-                          fit: BoxFit.cover,
-                        )),
+            margin: const EdgeInsets.only(left: 12, right: 12, bottom: 10),
+            // padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(
+              color: isMine
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey.shade200,
+              borderRadius: BorderRadius.only(
+                topLeft: isMine ? Radius.circular(radius) : Radius.circular(0),
+                bottomLeft:
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
+                bottomRight:
+                    isMine ? const Radius.circular(0) : Radius.circular(radius),
+                topRight:
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
               ),
             ),
-          )),
-          if (!isMine) getdate(msgDate),
-        ]);
-  }
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // model.repliedTo != null
+                //     ? RepliedToWidget(
+                //         myID: myID,
+                //         title: title,
+                //         messegedByMe: isMine,
+                //         messageId: model.repliedTo!,
+                //         showCloseButton: false,
+                //         chatController: chatController)
+                //     : const SizedBox(),
 
-  BorderRadius _borderRaduis() {
-    return BorderRadius.only(
-      topLeft: isMine ? const Radius.circular(20) : const Radius.circular(0),
-      bottomLeft:
-          isMine ? const Radius.circular(20) : const Radius.circular(10),
-      bottomRight:
-          isMine ? const Radius.circular(10) : const Radius.circular(20),
-      topRight: isMine ? const Radius.circular(0) : const Radius.circular(20),
-    );
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: model.content.isEmpty
+                      ? Container(
+                          width: 240,
+                          height: 240,
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: isMine
+                                    ? Colors.white
+                                    : Theme.of(context).colorScheme.primary,
+                              )),
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(radius),
+                          child: CachedNetworkImage(
+                            imageUrl: model.content,
+                            width: 240,
+                            height: 260,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 240,
+                              height: 260,
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                  width: 28,
+                                  height: 28,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: isMine
+                                        ? Colors.white
+                                        : Theme.of(context).colorScheme.primary,
+                                  )),
+                            ),
+                          )),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(left: 12, bottom: 4),
+                  child: Text(
+                    getChatDate(model.createdOn.toDate()),
+                    style: TextStyle(
+                        fontFamily: 'Helvetica Neue',
+                        fontSize: 10,
+                        color: isMine ? Colors.white54 : Colors.grey,
+                        fontWeight: FontWeight.w400),
+                  ),
+                )
+              ],
+            ),
+          )),
+        ]);
   }
 }

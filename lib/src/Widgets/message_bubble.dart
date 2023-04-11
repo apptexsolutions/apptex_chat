@@ -1,56 +1,49 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import '../Controllers/chat_conrtroller.dart';
-import '../Controllers/contants.dart';
-import '../Models/MessageModel.dart';
-import '../Screens/chat_screen.dart';
-import 'profile.dart';
-import 'replied_to.dart';
+
+
+import '../core/utils/utils.dart';
+import '../models/conversation_model.dart';
+import '../models/message_model.dart';
 
 class MessageBubble extends StatelessWidget {
   final bool isMine;
   final MessageModel model;
-  final String profileUrl;
-  final DateTime msgDate;
-  final ChatController chatController;
-  final String myID;
-  final String title;
-
-  const MessageBubble(
-      {required this.isMine,
-      required this.model,
-      required this.profileUrl,
-      required this.msgDate,
-      required this.chatController,
-      Key? key,
-      required this.myID,
-      required this.title})
-      : super(key: key);
+  final ChatUserModel currentUser;
+  final ChatUserModel otherUSer;
+  const MessageBubble({
+    Key? key,
+    required this.isMine,
+    required this.model,
+    required this.currentUser,
+    required this.otherUSer,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double radius = 16;
+    double radius = 10;
+
     return Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment:
             isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if (!isMine) Container(width: 3),
-          if (isMine) getdate(msgDate),
-          if (!isMine) ProfilePic(profileUrl, size: 26),
           IntrinsicWidth(
               child: Container(
             constraints: BoxConstraints(
-                minWidth: 50,
-                maxWidth: MediaQuery.of(context).size.width * 0.6),
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+                minHeight: 42,
+                maxWidth: MediaQuery.of(context).size.width * 0.6,
+                minWidth: MediaQuery.of(context).size.width * 0.4),
+            margin: const EdgeInsets.only(left: 12, right: 12, bottom: 10),
             // padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             decoration: BoxDecoration(
-              color: isMine ? kprimary1 : kprimary2,
+              color: isMine
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey.shade200,
               borderRadius: BorderRadius.only(
-                topLeft:
-                    isMine ? Radius.circular(radius) : Radius.circular(radius),
+                topLeft: isMine ? Radius.circular(radius) : Radius.circular(0),
                 bottomLeft:
-                    isMine ? Radius.circular(radius) : const Radius.circular(0),
+                    isMine ? Radius.circular(radius) : Radius.circular(radius),
                 bottomRight:
                     isMine ? const Radius.circular(0) : Radius.circular(radius),
                 topRight:
@@ -60,33 +53,44 @@ class MessageBubble extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                model.repliedTo != null
-                    ? RepliedToWidget(
-                        myID: myID,
-                        title: title,
-                        messegedByMe: isMine,
-                        messageId: model.repliedTo!,
-                        showCloseButton: false,
-                        chatController: chatController)
-                    : const SizedBox(),
+                // model.repliedTo != null
+                //     ? RepliedToWidget(
+                //         myID: myID,
+                //         title: title,
+                //         messegedByMe: isMine,
+                //         messageId: model.repliedTo!,
+                //         showCloseButton: false,
+                //         chatController: chatController)
+                //     : const SizedBox(),
+
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding: const EdgeInsets.only(
+                      left: 12, right: 12, top: 8, bottom: 4),
                   child: Text(
-                    model.message,
+                    model.content,
                     style: TextStyle(
-                        color: isMine ? kWhite : Colors.grey.shade800,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13),
+                        fontFamily: 'Helvetica Neue',
+                        color: isMine ? Colors.white : Colors.grey.shade800,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
+
+                Padding(
+                  padding: EdgeInsets.only(left: 12, bottom: 4),
+                  child: Text(
+                    getChatDate(model.createdOn.toDate()),
+                    style: TextStyle(
+                        fontFamily: 'Helvetica Neue',
+                        fontSize: 10,
+                        color: isMine ? Colors.white54 : Colors.grey,
+                        fontWeight: FontWeight.w400),
+                  ),
+                )
               ],
             ),
           )),
-          //  if (isMine) ProfilePic(profileUrl, size: 30),
-          //if (isMine) Container(width: 3),
-          if (!isMine) getdate(msgDate),
         ]);
   }
 }

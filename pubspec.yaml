@@ -11,18 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
   
-  #Dependencies
-  get: ^4.6.1
-  image_picker: ^0.8.5
 
   # Firebase Dependencies
-  firebase_core:
   cloud_firestore:
   firebase_storage:
+  ntp: 
+  cached_network_image: 
+  provider: 
 
-  audio_waveforms: ^0.1.5
-  cached_network_image: ^3.2.2
-  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
