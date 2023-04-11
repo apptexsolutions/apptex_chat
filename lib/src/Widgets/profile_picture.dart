@@ -2,8 +2,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
-import '../Controllers/contants.dart';
 // ignore: must_be_immutable
 class ProfilePic extends StatelessWidget {
   ProfilePic(this.url, {this.size = 48, this.radius = 100, Key? key})
@@ -22,7 +20,7 @@ class ProfilePic extends StatelessWidget {
       borderRadius: BorderRadius.circular(radius),
       child: isNotUrl
           ? Container(
-              color: kprimary1,
+              color: Theme.of(context).colorScheme.primary,
               width: imsix,
               height: imsix,
               child: const Icon(
@@ -46,4 +44,3 @@ class ProfilePic extends StatelessWidget {
     );
   }
 }
-

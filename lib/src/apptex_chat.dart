@@ -1,190 +1,191 @@
-import 'package:apptex_chat/src/Controllers/chat_conrtroller.dart';
-import 'package:apptex_chat/src/Controllers/contants.dart';
-import 'package:apptex_chat/src/Controllers/messages_controller.dart';
-import 'package:apptex_chat/src/Models/ChatModel.dart';
-import 'package:apptex_chat/src/Models/UserModel.dart';
-import 'package:apptex_chat/src/Screens/my_chats.dart';
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:ntp/ntp.dart';
+
+import 'core/services/chat_services.dart';
+import 'core/services/db_services.dart';
+import 'models/conversation_model.dart';
+import 'models/message_model.dart';
 
 class AppTexChat {
   AppTexChat._();
   static final AppTexChat _instance = AppTexChat._();
   static AppTexChat get instance => _instance;
+  late ChatUserModel _currentUser;
+  bool isInitialize = false;
+  late int _ntpOffeset;
 
-  static String? _uuid;
-  static bool _isInited = false;
-  static String? _name;
-  static String? _profileURl;
-  static MessagesController? _controler;
-  static bool _isStarted = false;
-  static bool _isVoicePermissionAccepted = false;
+  ChatUserModel get currentUser => _currentUser;
 
-  static Future<void> init({Color? primaryColor, Color? secondaryColor}) async {
-    _isInited = true;
-    if (primaryColor != null) kprimary1 = primaryColor;
-    if (secondaryColor != null) kprimary5 = secondaryColor;
+  Future<void> initChat({required ChatUserModel currentUser}) async {
+    _currentUser = currentUser;
+    isInitialize = true;
+    _ntpOffeset = await NTP.getNtpOffset(localTime: DateTime.now());
   }
 
-  requestPermission() async {
-    PermissionStatus status = await Permission.microphone.request();
-    if (status.isDenied) {
-      return false;
+  ///[startNewConversationWith] method will initialize current user caht with provided user
+  ///it is [Future<ConversationModel>] method so controll your navigation also show some loading in the ui if needed
+  Future<ConversationModel> startNewConversationWith(ChatUserModel userModel,
+      {String? initialMessage}) async {
+    if (!isInitialize) {
+      log('AppTexChat Error: Initialize AppTextChat first by calling AppTexChat.instance.initChat()',
+          name: 'AppTextChat');
+    }
+
+    final _dbServices = ChatDBServices.instance;
+    final roomId = _getChatRoomID(userModel.uid);
+    final model = ConversationModel(
+        chatRoomId: roomId,
+        lastMessage: initialMessage == null ? '' : initialMessage,
+        userIds: [currentUser.uid, userModel.uid],
+        lastMessageTime: Timestamp.now(),
+        users: [currentUser, userModel],
+        lastMessageSenderId: initialMessage == null ? '' : currentUser.uid,
+        isRequestSent: false,
+        unreadMessageCount: 0);
+
+    final result = await _dbServices.startNewChat(model);
+    ChatServices.instance.conversationModel = result ?? model;
+    if (result != null)
+      return result;
+    else
+      return model;
+  }
+
+  Future<void> sendTextMessage(String text) async {
+    final _dbServices = ChatDBServices.instance;
+
+    final _chatService = ChatServices.instance;
+    final model = MessageModel(
+        id: '',
+        code: 'TXT',
+        content: text,
+        senderId: currentUser.uid,
+        createdOn: Timestamp.fromDate(
+            DateTime.now().add(Duration(milliseconds: _ntpOffeset))),
+        isMessageRead: false);
+
+    if (_chatService.conversationModel != null) {
+      await _dbServices.sendMessage(
+          _chatService.conversationModel!.chatRoomId, model);
+
+      _dbServices
+          .updateConversation(_chatService.conversationModel!.chatRoomId, {
+        'lastMessage': text,
+        'lastMessageTime': FieldValue.serverTimestamp(),
+        'lastMessageSenderId': currentUser.uid,
+      });
+
+      _dbServices
+          .updateUnreadMessageCount(_chatService.conversationModel!.chatRoomId);
     } else {
-      return true;
+      log('Conversation Model is Null', name: 'Apptext Chat');
     }
   }
 
-  Future<void> Login_My_User(
-      {required String FullName,
-      required String your_uuid,
-      String profileUrl = ""}) async {
-    if (!_isInited) {
-      print(
-          "ErrorCode XID_051: Please Call 'ApptexChat.instance.Init()' in the main() function above runApp().");
-      return;
-    }
-    bool permissionStatus = await requestPermission();
-    if (!permissionStatus) {
-      print("-- Permission Denied");
-      _isVoicePermissionAccepted = false;
+  ///It will return messageId so that you can update your customMessage
+  Future<String?> sendCustomMessage(
+      MessageModel messageModel, String message) async {
+    final _dbServices = ChatDBServices.instance;
+
+    final _chatService = ChatServices.instance;
+
+    if (_chatService.conversationModel != null) {
+      final messageId = await _dbServices.sendMessage(
+          _chatService.conversationModel!.chatRoomId, messageModel);
+      _dbServices
+          .updateConversation(_chatService.conversationModel!.chatRoomId, {
+        'lastMessage': message,
+        'lastMessageTime': FieldValue.serverTimestamp(),
+        'lastMessageSenderId': currentUser.uid,
+      });
+      return messageId;
     } else {
-      print("-- Permission Accepted");
-      _isVoicePermissionAccepted = true;
+      log('Conversation Model is Null', name: 'Apptext Chat');
+      return null;
     }
-
-    if (!_isStarted) {
-      await Firebase.initializeApp();
-      _isStarted = true;
-    }
-
-    _uuid = your_uuid;
-    _name = FullName;
-    _profileURl = profileUrl;
-    _controler = MessagesController(your_uuid, false);
-    _controler!.bindAllChats(your_uuid);
   }
 
-  OpenMessages(BuildContext context, {bool isShowBackButton = false}) {
-    if (!_isInited) {
-      print(
-          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
-      return;
-    }
-    if (_uuid == null) {
-      print(
-          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
-      return;
-    }
-    _controler!.showBackButton = isShowBackButton;
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MyChats(_controler!)));
+  Future<void> updateCustomMessage(
+      String id, String message, MessageModel model) async {
+    final _dbServices = ChatDBServices.instance;
+
+    final _chatService = ChatServices.instance;
+    await _dbServices.updateExistingMessage(
+        id, _chatService.conversationModel!.chatRoomId, model.toMap());
+    _dbServices.updateConversation(_chatService.conversationModel!.chatRoomId, {
+      'lastMessage': message,
+      'lastMessageTime': FieldValue.serverTimestamp(),
+      'lastMessageSenderId': currentUser.uid,
+    });
+    _dbServices
+        .updateUnreadMessageCount(_chatService.conversationModel!.chatRoomId);
   }
 
-  Widget GetMyMessages(BuildContext context, {bool isShowBackButton = false}) {
-    if (!_isInited) {
-      String error =
-          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().";
+  Future<void> sendImage(File file) async {
+    final _dbServices = ChatDBServices.instance;
 
-      print(error);
-      return Text(
-        error,
-        style: myStyle(12, false, color: Colors.red),
-      );
-    }
-    if (_uuid == null) {
-      String error =
-          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'";
-      print(error);
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Text(error),
-      );
-    }
-    _controler!.showBackButton = isShowBackButton;
-    return MyChats(_controler!);
-  }
+    final _chatService = ChatServices.instance;
+    final model = MessageModel(
+        id: '',
+        code: 'IMG',
+        content: '',
+        senderId: currentUser.uid,
+        createdOn: Timestamp.fromDate(
+            DateTime.now().add(Duration(milliseconds: _ntpOffeset))),
+        isMessageRead: false);
 
-  Start_Chat_With(BuildContext context,
-      {required String receiver_name,
-      required String receiver_id,
-      String receiver_profileUrl = ""}) async {
-    if (!_isInited) {
-      print(
-          "ErrorCode XID_051: Please Call 'Init()' in the main() function above runApp().");
-      return;
-    }
-    if (_uuid == null) {
-      print(
-          "ErrorCode XID_044: Please call 'Login_My_User' in the time of signing-in.'");
-      return;
-    }
-    String chatRoomID = _getGenericuuid(receiver_id);
-
-    DocumentSnapshot ss = await firebaseFirestore
-        .collection(roomCollection)
-        .doc(chatRoomID)
-        .get();
-
-    if (!ss.exists) {
-      ChatModel model = ChatModel(
-          uid: chatRoomID,
-          createdAt: Timestamp.now(),
-          lastMessage: "",
-          lastMessageSendBy: "",
-          unReadCount: 0,
-          ReadByOther: false,
-          uuids: [_uuid!, receiver_id],
-          typers: [],
-          lastMessageTimeStamp: Timestamp.now(),
-          users: [
-            UserModel(uid: _uuid!, name: _name!, profileUrl: _profileURl!),
-            UserModel(
-                uid: receiver_id,
-                name: receiver_name,
-                profileUrl: receiver_profileUrl)
-          ]);
-      model.lastMessage = null;
-      firebaseFirestore
-          .collection(roomCollection)
-          .doc(chatRoomID)
-          .set(model.toMap());
-
-      ChatController controller =
-          ChatController(chatRoomID, _isVoicePermissionAccepted);
-      controller.startChat(context, model, _uuid!);
+    if (_chatService.conversationModel != null) {
+      final _id = await _dbServices.sendMessage(
+          _chatService.conversationModel!.chatRoomId, model);
+      _dbServices
+          .updateConversation(_chatService.conversationModel!.chatRoomId, {
+        'lastMessage': 'Image',
+        'lastMessageSenderId': currentUser.uid,
+        'lastMessageTime': FieldValue.serverTimestamp(),
+      });
+      _dbServices
+          .updateUnreadMessageCount(_chatService.conversationModel!.chatRoomId);
+      String name =
+          currentUser.uid + Timestamp.now().millisecondsSinceEpoch.toString();
+      String _url = await _dbServices.uploadFile(file, "ApptexChat/$name.jpg");
+      _dbServices.updateExistingMessage(
+          _id, _chatService.conversationModel!.chatRoomId, {'content': _url});
     } else {
-      ChatModel model = ChatModel.fromMap(ss);
-      ChatController controller =
-          ChatController(chatRoomID, _isVoicePermissionAccepted);
-
-      model.users.clear();
-
-      model.users
-          .add(UserModel(uid: _uuid!, name: _name!, profileUrl: _profileURl!));
-      model.users.add(UserModel(
-          uid: receiver_id,
-          name: receiver_name,
-          profileUrl: receiver_profileUrl));
-
-      controller.startChat(context, model, _uuid!);
-
-      firebaseFirestore
-          .collection(roomCollection)
-          .doc(chatRoomID)
-          .update(model.toMap());
+      log('Conversation Model is Null', name: 'Apptext Chat');
     }
   }
 
-  String _getGenericuuid(String userBUuid) {
+  Future<void> updateExistingMessage(
+      String roomId, String messageId, Map<String, dynamic> fields) async {
+    final _dbServices = ChatDBServices.instance;
+    await _dbServices.updateExistingMessage(messageId, roomId, fields);
+  }
+
+  Future<void> deleteMessage(
+    String roomId,
+    String messageId,
+  ) async {
+    final _dbServices = ChatDBServices.instance;
+    await _dbServices.deleteMessage(roomId, messageId);
+  }
+
+  String _getChatRoomID(String otherUserId) {
     String chatRoomID = "";
-    if (_uuid!.compareTo(userBUuid) == 1) {
-      chatRoomID = _uuid! + "" + userBUuid;
+    if (currentUser.uid.compareTo(otherUserId) == 1) {
+      chatRoomID = currentUser.uid + "_" + otherUserId;
     } else {
-      chatRoomID = userBUuid + "" + _uuid!;
+      chatRoomID = otherUserId + "_" + currentUser.uid;
     }
     return chatRoomID;
+  }
+
+  Future<void> updateConversation(
+      String roomId, Map<String, dynamic> fields) async {
+    final _dbServices = ChatDBServices.instance;
+
+    await _dbServices.updateConversation(roomId, fields);
   }
 }
