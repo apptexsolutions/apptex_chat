@@ -5,7 +5,7 @@ import 'db_services.dart';
 
 class ChatServices {
   ChatServices._();
-  static ChatServices _instance = ChatServices._();
+  static final ChatServices _instance = ChatServices._();
   static ChatServices get instance => _instance;
   final _dbServices = ChatDBServices.instance;
   ConversationModel? conversationModel;

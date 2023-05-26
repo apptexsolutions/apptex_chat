@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+
 const Map<int, String> weekdayName = {
   1: "Monday",
   2: "Tuesday",
@@ -48,4 +51,25 @@ String getChatDate(DateTime? d) {
   }
 
   return date;
+}
+
+String dateFormat({required DateTime dateTime, required String formate}) {
+  return DateFormat(formate).format(dateTime);
+}
+
+String getFormatedDayAndTime(Timestamp x) {
+  final now = DateTime.now();
+  final date = x.toDate();
+  final diff = now.difference(date).inDays;
+  if (diff < 1) {
+    return 'Today, ' + dateFormat(dateTime: date, formate: 'hh:mm a');
+  } else if (diff == 1) {
+    return 'Yesterday, ${dateFormat(dateTime: date, formate: 'hh:mm a')}';
+  } else if (diff < 7) {
+    return dateFormat(dateTime: date, formate: 'EEEE, ') +
+        dateFormat(dateTime: date, formate: 'hh:mm a');
+  } else {
+    return dateFormat(dateTime: date, formate: 'dd MMM, At ') +
+        dateFormat(dateTime: date, formate: 'hh:mm a');
+  }
 }

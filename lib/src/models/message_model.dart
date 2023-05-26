@@ -1,23 +1,27 @@
-
-
+import 'package:apptex_chat/apptex_chat.dart';
+import 'package:apptex_chat/src/core/services/chat_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel {
   String id;
   String code;
   String content;
-  String senderId;
+  String _senderId;
   Timestamp createdOn;
   bool isMessageRead;
   MessageModel({
-     this.id='',
+    this.id = '',
     required this.code,
     required this.content,
-    required this.senderId,
+    required String senderId,
     required this.createdOn,
-    this.isMessageRead=false,
-  });
-  
+    this.isMessageRead = false,
+  }) : _senderId = senderId;
+
+  ChatUserModel get sender => AppTexChat.instance.currentUser.uid == _senderId
+      ? AppTexChat.instance.currentUser
+      : ChatServices.instance.conversationModel!.otherUser;
+  bool get isMine => AppTexChat.instance.currentUser.uid == _senderId;
 
   MessageModel copyWith({
     String? id,
@@ -31,7 +35,7 @@ class MessageModel {
       id: id ?? this.id,
       code: code ?? this.code,
       content: content ?? this.content,
-      senderId: senderId ?? this.senderId,
+      senderId: senderId ?? _senderId,
       createdOn: createdOn ?? this.createdOn,
       isMessageRead: isMessageRead ?? this.isMessageRead,
     );
@@ -42,7 +46,7 @@ class MessageModel {
       'id': id,
       'code': code,
       'content': content,
-      'senderId': senderId,
+      'senderId': _senderId,
       'createdOn': createdOn,
       'isMessageRead': isMessageRead,
     };

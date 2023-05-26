@@ -1,4 +1,5 @@
 import 'package:apptex_chat/apptex_chat.dart';
+import 'package:example/chat_screen.dart';
 import 'package:example/custom_button_square.dart';
 import 'package:flutter/material.dart';
 
@@ -8,9 +9,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    AppTexChat.instance.initChat(
-        currentUser: ChatUserModel(
-            uid: 'cuid', profileUrl: '', name: 'Current User', fcmToken: ''));
+    var appTexChat = AppTexChat.instance;
 
     return Scaffold(
       body: SizedBox(
@@ -24,69 +23,42 @@ class Login extends StatelessWidget {
                 buttonName: "Login as User A",
                 textColor: Colors.white,
                 onTap: () async {
-                  final model = await AppTexChat.instance
-                      .startNewConversationWith(ChatUserModel(
-                          uid: 'otherid',
-                          profileUrl: '',
-                          name: 'Other User',
-                          fcmToken: ''));
+                  appTexChat.initChat(
+                    currentUser: ChatUserModel(
+                      uid: 'myid',
+                      profileUrl: '',
+                      name: 'Shah Raza',
+                      fcmToken: '',
+                    ),
+                  );
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CustomeChatScreen(model)));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InboxScreen(),
+                    ),
+                  );
                 }),
             SizedBox(height: 50),
             CustomButtonSquare(
-                buttonColor: Colors.blue,
-                buttonName: "Open Inbox",
-                textColor: Colors.white,
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => InboxScreen()));
-                }),
+              buttonColor: Colors.blue,
+              buttonName: "Login as User B",
+              textColor: Colors.white,
+              onTap: () async {
+                appTexChat.initChat(
+                  currentUser: ChatUserModel(
+                    uid: 'otherId',
+                    profileUrl: '',
+                    name: 'Idrees',
+                    fcmToken: '',
+                  ),
+                );
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => InboxScreen()));
+              },
+            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class CustomeChatScreen extends StatelessWidget {
-  final ConversationModel model;
-  const CustomeChatScreen(this.model);
-
-  @override
-  Widget build(BuildContext context) {
-    return ChatScreen(
-      conversationModel: model,
-      appBarBuilder: ((currentUser, otherUser) => AppBar()),
-      typingWidget: InkWell(
-        onTap: () {
-          AppTexChat.instance.sendTextMessage(
-              DateTime.now().microsecondsSinceEpoch.toString());
-        },
-        child: Container(
-          margin: EdgeInsets.only(bottom: 32, left: 32),
-          child: Text('Add Test Message'),
-        ),
-      ),
-      bubbleBuilder: (model, currentUser, otherUser, isMine) {
-        final code = model.code;
-        if (code == 'TXT')
-          return MessageBubble(
-              isMine: isMine,
-              model: model,
-              currentUser: currentUser,
-              otherUSer: otherUser);
-        else if (code == 'IMG')
-          return ImageBubble(
-              isMine: isMine,
-              model: model,
-              currentUser: currentUser,
-              otherUSer: otherUser);
-        else
-          return Container();
-      },
     );
   }
 }
@@ -97,27 +69,78 @@ class InboxScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text('Start chat with new user'),
+        onPressed: () async {
+          final model = await AppTexChat.instance.startNewConversationWith(
+            ChatUserModel(
+              uid: 'newUserId',
+              profileUrl: '',
+              name: 'New User Name',
+              fcmToken: '',
+            ),
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CustomChatScreen(model),
+            ),
+          );
+        },
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            InkWell(
-                onTap: () async {
-                  AppTexChat.instance.sendTextMessage("asda");
-                },
-                child: Container(
-                  child: Text(
-                    "Button",
-                  ),
-                  color: Colors.red,
-                  padding: EdgeInsets.all(10),
-                )),
             Expanded(
               child: ConversationsScreen(
-                builder: (conversations, isLoading) => ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: conversations.length,
-                    itemBuilder: (context, index) => Container(
-                        child: Text(conversations[index].getOtherUser.name))),
+                builder: (conversations, isLoading) => ListView.separated(
+                  separatorBuilder: (context, index) => SizedBox(height: 20),
+                  shrinkWrap: true,
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  itemCount: conversations.length,
+                  itemBuilder: (context, index) => Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: Offset(0, 1))
+                        ]),
+                    padding: EdgeInsets.all(10),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CustomChatScreen(
+                              conversations[index],
+                            ),
+                          ),
+                        );
+                      },
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            conversations[index].otherUser.profileUrl ?? ''),
+                      ),
+                      title: Text(conversations[index].otherUser.name),
+                      subtitle: Text(conversations[index].lastMessage),
+                      trailing: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          conversations[index].unreadMessageCount.toString(),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

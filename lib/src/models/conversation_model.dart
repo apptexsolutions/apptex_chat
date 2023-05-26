@@ -4,23 +4,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ConversationModel {
   String chatRoomId;
   String lastMessage;
-  List userIds;
+  List _userIds;
   Timestamp lastMessageTime;
-  List<ChatUserModel> users;
-  String lastMessageSenderId;
-  int unreadMessageCount;
+  List<ChatUserModel> _users;
+  String _lastMessageSenderId;
+  int _unreadMessageCount;
   bool isRequestSent;
   ConversationModel({
     required this.chatRoomId,
     required this.lastMessage,
-    required this.userIds,
+    required List<dynamic> userIds,
     required this.lastMessageTime,
-    required this.users,
-    required this.lastMessageSenderId,
-    required this.unreadMessageCount,
+    required List<ChatUserModel> users,
+    required String lastMessageSenderId,
+    required int unreadMessageCount,
     required this.isRequestSent,
-  });
+  })  : _lastMessageSenderId = lastMessageSenderId,
+        _userIds = userIds,
+        _unreadMessageCount = unreadMessageCount,
+        _users = users;
 
+  ChatUserModel get updateCurrentUser => AppTexChat.instance.currentUser;
+  ChatUserModel get oldCurrentUser => _users.firstWhere(
+      (element) => element.uid == AppTexChat.instance.currentUser.uid);
+  ChatUserModel get otherUser => _users.firstWhere(
+      (element) => element.uid != AppTexChat.instance.currentUser.uid);
+  int get unreadMessageCount =>
+      _lastMessageSenderId != updateCurrentUser.uid ? _unreadMessageCount : 0;
+  bool get isLastMessageMine => _lastMessageSenderId == updateCurrentUser.uid;
   ConversationModel copyWith({
     String? chatRoomId,
     String? lastMessage,
@@ -34,34 +45,24 @@ class ConversationModel {
     return ConversationModel(
         chatRoomId: chatRoomId ?? this.chatRoomId,
         lastMessage: lastMessage ?? this.lastMessage,
-        userIds: userIds ?? this.userIds,
+        userIds: userIds ?? _userIds,
         lastMessageTime: lastMessageTime ?? this.lastMessageTime,
-        users: users ?? this.users,
+        users: users ?? _users,
         isRequestSent: isRequestSent ?? this.isRequestSent,
-        unreadMessageCount: unreadMessageCount ?? this.unreadMessageCount,
-        lastMessageSenderId: lastMessageSenderId ?? this.lastMessageSenderId);
+        unreadMessageCount: unreadMessageCount ?? _unreadMessageCount,
+        lastMessageSenderId: lastMessageSenderId ?? _lastMessageSenderId);
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'chatRoomId': chatRoomId,
       'lastMessage': lastMessage,
-      'userIds': userIds,
+      'userIds': _userIds,
       'lastMessageTime': lastMessageTime,
-      'users': users.map((x) => x.toMap()).toList(),
-      'lastMessageSenderId': lastMessageSenderId,
+      'users': _users.map((x) => x.toMap()).toList(),
+      'lastMessageSenderId': _lastMessageSenderId,
       'isRequestSent': isRequestSent,
     };
-  }
-
-  ChatUserModel get getOtherUser {
-    return users.firstWhere(
-        (element) => element.uid != AppTexChat.instance.currentUser.uid);
-  }
-
-  ChatUserModel get getCurrentUser {
-    return users.firstWhere(
-        (element) => element.uid == AppTexChat.instance.currentUser.uid);
   }
 
   factory ConversationModel.fromMap(Map<String, dynamic> map) {
