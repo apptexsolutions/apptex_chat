@@ -1,3 +1,4 @@
+import 'package:apptex_chat/src/models/chat_user_model.dart';
 import 'package:apptex_chat/src/widgets/audio_bubble.dart';
 import 'package:apptex_chat/src/widgets/custom_animation.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
