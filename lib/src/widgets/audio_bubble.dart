@@ -163,9 +163,7 @@ class AudioBubble extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8, bottom: 2),
                     child: Text(
-                      getChatDate(
-                        model.createdOn.toDate(),
-                      ),
+                      getFormatedDayAndTime(model.createdOn),
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 10,

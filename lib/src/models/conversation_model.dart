@@ -1,5 +1,4 @@
 import 'package:apptex_chat/apptex_chat.dart';
-import 'package:apptex_chat/src/models/chat_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ConversationModel {

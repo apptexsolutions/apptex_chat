@@ -50,106 +50,121 @@ class ChatScreen extends StatelessWidget {
       create: (context) => ChatViewModel(model: conversationModel),
       child: Consumer<ChatViewModel>(
         builder: (context, model, child) {
-          return Scaffold(
-            appBar: appBarBuilder(model.currentUser, model.otherUser),
-            backgroundColor: backgroundColor,
-            bottomNavigationBar:
-                typingWidget ?? defaultTypingArea(showMicButton),
-            body: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (model.isChatReady) ...[
-                  if (model.messages.isEmpty)
-                    Center(
-                      child: emptyListMessage ??
-                          const Text(
-                            'No messages yet!',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey),
-                          ),
-                    )
-                  else
-                    Positioned.fill(
-                      child: ListView.builder(
-                        itemCount: model.messages.length,
-                        padding: const EdgeInsets.only(top: 16, bottom: 10),
-                        reverse: true,
-                        itemBuilder: (context, index) {
-                          final messageModel = model.messages[index];
-                          return Column(
-                            children: [
-                              if (bubbleBuilder == null)
-                                getCorrespondenseBubble(messageModel, model)
-                              else
-                                bubbleBuilder!(
-                                  messageModel,
-                                  model.currentUser,
-                                  model.otherUser,
-                                  messageModel.isMine,
-                                ),
-                              if (index != 0 &&
-                                  messageModel.createdOn.toDate().day !=
-                                      model.messages[index - 1].createdOn
-                                          .toDate()
-                                          .day)
-                                timeWidgetBuilder != null
-                                    ? timeWidgetBuilder!((model
-                                        .messages[index - 1].createdOn
-                                        .toDate()))
-                                    : Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 0, horizontal: 4),
-                                        margin: const EdgeInsets.only(
-                                            top: 20, bottom: 10),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(60),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Colors.grey.shade300,
-                                                  blurRadius: 6,
-                                                  offset: const Offset(0, 2))
-                                            ]),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            model.getMessageReferecneTime(model
-                                                .messages[index - 1].createdOn),
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
+          if (showMicButton && !model.recorderController.hasPermission) {
+            model.recorderController.checkPermission();
+          }
+          return GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Scaffold(
+              appBar: appBarBuilder(model.currentUser, model.otherUser),
+              backgroundColor: backgroundColor,
+              bottomNavigationBar: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: typingWidget ?? defaultTypingArea(showMicButton),
+                ),
+              ),
+              body: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (model.isChatReady) ...[
+                    if (model.messages.isEmpty)
+                      Center(
+                        child: emptyListMessage ??
+                            const Text(
+                              'No messages yet!',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey),
+                            ),
+                      )
+                    else
+                      Positioned.fill(
+                        child: ListView.builder(
+                          itemCount: model.messages.length,
+                          padding: const EdgeInsets.only(top: 16, bottom: 10),
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            final messageModel = model.messages[index];
+                            return Column(
+                              children: [
+                                if (bubbleBuilder == null)
+                                  getCorrespondenseBubble(messageModel, model)
+                                else
+                                  bubbleBuilder!(
+                                    messageModel,
+                                    model.currentUser,
+                                    model.otherUser,
+                                    messageModel.isMine,
+                                  ),
+                                if (index != 0 &&
+                                    messageModel.createdOn.toDate().day !=
+                                        model.messages[index - 1].createdOn
+                                            .toDate()
+                                            .day)
+                                  timeWidgetBuilder != null
+                                      ? timeWidgetBuilder!((model
+                                          .messages[index - 1].createdOn
+                                          .toDate()))
+                                      : Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 0, horizontal: 4),
+                                          margin: const EdgeInsets.only(
+                                              top: 20, bottom: 10),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(60),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.grey.shade300,
+                                                    blurRadius: 6,
+                                                    offset: const Offset(0, 2))
+                                              ]),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              model.getMessageReferecneTime(
+                                                  model.messages[index - 1]
+                                                      .createdOn),
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  // Positioned(
-                  //   bottom: 0,
-                  //   right: 0,
-                  //   left: 0,
-                  //   child: typingWidget ?? defaultTypingArea(),
-                  // ),
-                ] else
-                  Center(
-                    child: progressIndicator ??
-                        SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                              ],
+                            );
+                          },
                         ),
-                  )
-              ],
+                      ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   right: 0,
+                    //   left: 0,
+                    //   child: typingWidget ?? defaultTypingArea(),
+                    // ),
+                  ] else
+                    Center(
+                      child: progressIndicator ??
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                    )
+                ],
+              ),
             ),
           );
         },
@@ -268,7 +283,7 @@ Widget defaultTypingArea(bool showMicButton) {
                 ),
               ),
               replacement: !showMicButton
-                  ? Container()
+                  ? const SizedBox.shrink()
                   : model.micButtonPressed
                       ? GestureDetector(
                           onTap: model.sendVoiceMessage,

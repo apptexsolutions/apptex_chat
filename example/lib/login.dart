@@ -26,7 +26,8 @@ class Login extends StatelessWidget {
                   appTexChat.initChat(
                     currentUser: ChatUserModel(
                       uid: 'myid',
-                      profileUrl: '',
+                      profileUrl:
+                          'https://avatars.githubusercontent.com/u/63047096?v=4',
                       name: 'Shah Raza',
                       fcmToken: '',
                     ),
@@ -47,7 +48,8 @@ class Login extends StatelessWidget {
                 appTexChat.initChat(
                   currentUser: ChatUserModel(
                     uid: 'otherId',
-                    profileUrl: '',
+                    profileUrl:
+                        'https://avatars.githubusercontent.com/u/38852291?v=4',
                     name: 'Idrees',
                     fcmToken: '',
                   ),
