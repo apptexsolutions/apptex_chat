@@ -27,6 +27,7 @@ class ChatViewModel extends BaseViewModel {
   final _dbServices = ChatDBServices.instance;
   bool isChatReady = false;
   bool micButtonPressed = false;
+  bool showEmojiPicker = false;
 
   //Controllers
   final TextEditingController messageController = TextEditingController();

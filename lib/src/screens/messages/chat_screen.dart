@@ -1,6 +1,7 @@
 import 'package:apptex_chat/src/models/chat_user_model.dart';
 import 'package:apptex_chat/src/widgets/audio_bubble.dart';
 import 'package:apptex_chat/src/widgets/custom_animation.dart';
+import 'package:apptex_chat/src/widgets/emoji_picker.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,8 @@ class ChatScreen extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
+              model.showEmojiPicker = false;
+              model.update();
             },
             child: Scaffold(
               appBar: appBarBuilder(model.currentUser, model.otherUser),
@@ -68,23 +71,18 @@ class ChatScreen extends StatelessWidget {
                   child: typingWidget ?? defaultTypingArea(showMicButton),
                 ),
               ),
-              body: Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (model.isChatReady) ...[
-                    if (model.messages.isEmpty)
-                      Center(
-                        child: emptyListMessage ??
-                            const Text(
-                              'No messages yet!',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey),
-                            ),
-                      )
-                    else
-                      Positioned.fill(
-                        child: ListView.builder(
+              body: model.isChatReady
+                  ? model.messages.isEmpty
+                      ? Center(
+                          child: emptyListMessage ??
+                              const Text(
+                                'No messages yet!',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey),
+                              ),
+                        )
+                      : ListView.builder(
                           itemCount: model.messages.length,
                           padding: const EdgeInsets.only(top: 16, bottom: 10),
                           reverse: true,
@@ -143,16 +141,8 @@ class ChatScreen extends StatelessWidget {
                               ],
                             );
                           },
-                        ),
-                      ),
-                    // Positioned(
-                    //   bottom: 0,
-                    //   right: 0,
-                    //   left: 0,
-                    //   child: typingWidget ?? defaultTypingArea(),
-                    // ),
-                  ] else
-                    Center(
+                        )
+                  : Center(
                       child: progressIndicator ??
                           SizedBox(
                             width: 30,
@@ -162,9 +152,7 @@ class ChatScreen extends StatelessWidget {
                               color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
-                    )
-                ],
-              ),
+                    ),
             ),
           );
         },
@@ -199,122 +187,164 @@ Widget defaultTypingArea(bool showMicButton) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         //margin: EdgeInsets.only(bottom: 32, left: 32),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Row(
-                  children: [
-                    if (model.micButtonPressed)
-                      GestureDetector(
-                        onTap: model.cancelVoiceMessage,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                            size: 27,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: Row(
+                      children: [
+                        if (model.micButtonPressed)
+                          GestureDetector(
+                            onTap: model.cancelVoiceMessage,
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                                size: 27,
+                              ),
+                            ),
+                          )
+                        else
+                          IconButton(
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              model.showEmojiPicker = !model.showEmojiPicker;
+                              model.update();
+                            },
+                            icon: Icon(
+                              Icons.emoji_emotions_outlined,
+                              color: !model.showEmojiPicker
+                                  ? const Color.fromARGB(255, 121, 120, 120)
+                                  : Colors.blue,
+                            ),
+                          ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: model.micButtonPressed
+                              ? AudioWaveforms(
+                                  recorderController: model.recorderController,
+                                  size: Size(
+                                      MediaQuery.of(context).size.width * 0.55,
+                                      40),
+                                  waveStyle: WaveStyle(
+                                    extendWaveform: true,
+                                    backgroundColor: Colors.black,
+                                    middleLineColor: Colors.transparent,
+                                    durationLinesColor:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                )
+                              : TextField(
+                                  onTap: () {
+                                    model.showEmojiPicker = false;
+                                    model.update();
+                                  },
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                  controller: model.messageController,
+                                  maxLines: 4,
+                                  minLines: 1,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "Type a message",
+                                  ),
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
+                                      model.showSendButton = true;
+                                    } else {
+                                      model.showSendButton = false;
+                                    }
+                                    model.update();
+                                  },
+                                ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.camera_alt,
+                            color: Color.fromARGB(255, 121, 120, 120),
                           ),
                         ),
-                      )
-                    else
-                      const Icon(Icons.sentiment_satisfied_alt_outlined),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: model.micButtonPressed
-                          ? AudioWaveforms(
-                              recorderController: model.recorderController,
-                              size: Size(
-                                  MediaQuery.of(context).size.width * 0.55, 40),
-                              waveStyle: WaveStyle(
-                                extendWaveform: true,
-                                backgroundColor: Colors.black,
-                                middleLineColor: Colors.transparent,
-                                durationLinesColor:
-                                    Theme.of(context).colorScheme.primary,
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Visibility(
+                  visible: model.showSendButton,
+                  child: InkWell(
+                    onTap: model.sendTextMessage,
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  replacement: !showMicButton
+                      ? const SizedBox.shrink()
+                      : model.micButtonPressed
+                          ? GestureDetector(
+                              onTap: model.sendVoiceMessage,
+                              child: CustomAnimation(
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             )
-                          : TextField(
-                              controller: model.messageController,
-                              maxLines: 4,
-                              minLines: 1,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Type a message",
+                          : GestureDetector(
+                              onLongPress: model.startRecording,
+                              child: Container(
+                                padding: const EdgeInsets.all(15),
+                                decoration: const BoxDecoration(
+                                  color: Colors.blue,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.mic,
+                                  color: Colors.white,
+                                ),
                               ),
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  model.showSendButton = true;
-                                } else {
-                                  model.showSendButton = false;
-                                }
-                                model.update();
-                              },
                             ),
-                    ),
-                    const Icon(Icons.attach_file),
-                    const SizedBox(width: 10),
-                    const Icon(Icons.camera_alt),
-                  ],
                 ),
-              ),
+              ],
             ),
-            const SizedBox(width: 10),
-            Visibility(
-              visible: model.showSendButton,
-              child: InkWell(
-                onTap: model.sendTextMessage,
-                child: Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.send,
-                    color: Colors.white,
-                  ),
+            Offstage(
+              offstage: !model.showEmojiPicker,
+              child: Container(
+                margin: const EdgeInsets.only(top: 10),
+                height: 250,
+                child: EmojiPickerSheet(
+                  textEditingController: model.messageController,
+                  model: model,
                 ),
               ),
-              replacement: !showMicButton
-                  ? const SizedBox.shrink()
-                  : model.micButtonPressed
-                      ? GestureDetector(
-                          onTap: model.sendVoiceMessage,
-                          child: CustomAnimation(
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Colors.blue,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.send,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        )
-                      : GestureDetector(
-                          onLongPress: model.startRecording,
-                          child: Container(
-                            padding: const EdgeInsets.all(15),
-                            decoration: const BoxDecoration(
-                              color: Colors.blue,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.mic,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
             ),
           ],
         ),
