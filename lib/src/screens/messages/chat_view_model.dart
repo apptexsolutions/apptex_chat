@@ -4,6 +4,7 @@ import 'package:apptex_chat/src/models/chat_user_model.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../apptex_chat.dart';
 import '../../core/services/chat_services.dart';
@@ -97,6 +98,7 @@ class ChatViewModel extends BaseViewModel {
       recorderController.checkPermission();
     }
     micButtonPressed = true;
+    showEmojiPicker = false;
     notifyListeners();
     String name =
         currentUser.uid + Timestamp.now().millisecondsSinceEpoch.toString();
@@ -117,8 +119,22 @@ class ChatViewModel extends BaseViewModel {
     _appTexChat.sendVoiceMessage(File(path!));
   }
 
+  sendMedia(File image) async {
+    _appTexChat.sendImage(image);
+  }
+
   void update() {
     notifyListeners();
+  }
+
+  Future<File?> pickMedia() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 35,
+    );
+    if (pickedFile == null) return null;
+
+    return File(pickedFile.path);
   }
 
   @override

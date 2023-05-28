@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:apptex_chat/src/models/chat_user_model.dart';
 import 'package:apptex_chat/src/widgets/audio_bubble.dart';
 import 'package:apptex_chat/src/widgets/custom_animation.dart';
@@ -272,7 +274,15 @@ Widget defaultTypingArea(bool showMicButton) {
                                 ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            FocusScope.of(context).unfocus();
+                            model.showEmojiPicker = false;
+                            File? image = await model.pickMedia();
+                            if (image != null) {
+                              model.sendMedia(image);
+                            }
+                            model.update();
+                          },
                           icon: const Icon(
                             Icons.camera_alt,
                             color: Color.fromARGB(255, 121, 120, 120),
