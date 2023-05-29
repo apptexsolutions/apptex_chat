@@ -254,7 +254,7 @@ Widget defaultTypingArea(bool showMicButton) {
                                     model.update();
                                   },
                                   style: const TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                   ),
                                   controller: model.messageController,
                                   maxLines: 4,
@@ -298,7 +298,7 @@ Widget defaultTypingArea(bool showMicButton) {
                   child: InkWell(
                     onTap: model.sendTextMessage,
                     child: Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(12),
                       decoration: const BoxDecoration(
                         color: Colors.blue,
                         shape: BoxShape.circle,
@@ -331,7 +331,7 @@ Widget defaultTypingArea(bool showMicButton) {
                           : GestureDetector(
                               onLongPress: model.startRecording,
                               child: Container(
-                                padding: const EdgeInsets.all(15),
+                                padding: const EdgeInsets.all(12),
                                 decoration: const BoxDecoration(
                                   color: Colors.blue,
                                   shape: BoxShape.circle,

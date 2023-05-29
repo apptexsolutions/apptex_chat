@@ -25,7 +25,7 @@ class Login extends StatelessWidget {
                 onTap: () async {
                   appTexChat.initChat(
                     currentUser: ChatUserModel(
-                      uid: 'myid',
+                      uid: '1',
                       profileUrl:
                           'https://avatars.githubusercontent.com/u/63047096?v=4',
                       name: 'Shah Raza',
@@ -47,7 +47,7 @@ class Login extends StatelessWidget {
               onTap: () async {
                 appTexChat.initChat(
                   currentUser: ChatUserModel(
-                    uid: 'otherId',
+                    uid: '2',
                     profileUrl:
                         'https://avatars.githubusercontent.com/u/38852291?v=4',
                     name: 'Idrees',
@@ -74,9 +74,10 @@ class InboxScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         label: Text('Start chat with new user'),
         onPressed: () async {
+          String uid = AppTexChat.instance.currentUser.uid == "1" ? "2" : "1";
           final model = await AppTexChat.instance.startNewConversationWith(
             ChatUserModel(
-              uid: 'newUserId',
+              uid: uid,
               profileUrl: '',
               name: 'New User Name',
               fcmToken: '',
