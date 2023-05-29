@@ -96,8 +96,6 @@ class AudioBubbleViewModel extends BaseViewModel {
         noOfSamples: 100,
         volume: 1.0,
       );
-      //playerController.setPlayerState(PlayerState.initialized,);
-      // playerController.startPlayer();
     } else {
       isInited = true;
       fileExist = false;

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:apptex_chat/src/core/extensions/num_extensions.dart';
+import 'package:apptex_chat/src/models/chat_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ntp/ntp.dart';
 

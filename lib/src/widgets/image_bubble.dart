@@ -1,3 +1,5 @@
+import 'package:apptex_chat/src/screens/full_screen_image.dart';
+import 'package:apptex_chat/src/widgets/profile_picture.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../core/utils/utils.dart';
@@ -17,16 +19,20 @@ class ImageBubble extends StatelessWidget {
     double radius = 10;
 
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment:
-            model.isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          IntrinsicWidth(
-              child: Container(
-            margin: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: !wasPreviousMsgeMine || !model.isMine ? 4 : 10),
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment:
+          model.isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        if (!model.isMine)
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 8, top: 6),
+            child: ProfilePic(model.sender.profileUrl ?? ''),
+          ),
+        IntrinsicWidth(
+          child: Container(
+            margin: const EdgeInsets.only(
+              top: 6,
+            ),
             decoration: BoxDecoration(
                 color: model.isMine
                     ? Theme.of(context).colorScheme.primary
@@ -64,22 +70,38 @@ class ImageBubble extends StatelessWidget {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(radius),
-                          child: CachedNetworkImage(
-                            imageUrl: model.content,
-                            fit: BoxFit.cover,
-                            width: 240,
-                            height: 260,
-                            placeholder: (context, url) => Container(
-                              color: Colors.grey,
-                              width: 240,
-                              height: 260,
-                              margin: EdgeInsets.zero,
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              color: Colors.grey,
-                              width: 240,
-                              height: 260,
-                              margin: EdgeInsets.zero,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FullScreenImage(
+                                    imgUrl: model.content,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Hero(
+                              tag: model.content,
+                              transitionOnUserGestures: true,
+                              child: CachedNetworkImage(
+                                imageUrl: model.content,
+                                fit: BoxFit.cover,
+                                width: 240,
+                                height: 260,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.grey,
+                                  width: 240,
+                                  height: 260,
+                                  margin: EdgeInsets.zero,
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.grey,
+                                  width: 240,
+                                  height: 260,
+                                  margin: EdgeInsets.zero,
+                                ),
+                              ),
                             ),
                           )),
                 ),
@@ -88,7 +110,7 @@ class ImageBubble extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8, bottom: 2),
                     child: Text(
-                      getChatDate(model.createdOn.toDate()),
+                      getFormatedDayAndTime(model.createdOn),
                       style: TextStyle(
                           fontFamily: 'Helvetica Neue',
                           fontSize: 10,
@@ -101,7 +123,14 @@ class ImageBubble extends StatelessWidget {
                 )
               ],
             ),
-          )),
-        ]);
+          ),
+        ),
+        if (model.isMine)
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0, left: 8, top: 6),
+            child: ProfilePic(model.sender.profileUrl ?? ''),
+          ),
+      ],
+    );
   }
 }

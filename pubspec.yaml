@@ -20,6 +20,9 @@ dependencies:
   provider: 
   audio_waveforms:
   intl:
+  emoji_picker_flutter: 
+  image_picker:
+  
 
 
 dev_dependencies:

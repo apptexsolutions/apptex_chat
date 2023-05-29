@@ -34,7 +34,9 @@ class AudioBubble extends StatelessWidget {
             constraints: BoxConstraints(
                 minWidth: 50,
                 maxWidth: MediaQuery.of(context).size.width * 0.7),
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+            margin: const EdgeInsets.only(
+              top: 6,
+            ),
             // padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             decoration: BoxDecoration(
               color: model.isMine
@@ -163,9 +165,7 @@ class AudioBubble extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8, bottom: 2),
                     child: Text(
-                      getChatDate(
-                        model.createdOn.toDate(),
-                      ),
+                      getFormatedDayAndTime(model.createdOn),
                       style: TextStyle(
                         fontFamily: 'Helvetica Neue',
                         fontSize: 10,
