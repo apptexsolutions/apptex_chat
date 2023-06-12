@@ -20,7 +20,11 @@ class ChatServices {
     messagesStreamController?.addStream(_streamMessages(model.chatRoomId));
     _messagesStreamSubscription =
         messagesStreamController?.stream.listen((List<MessageModel> list) {
-      messages = list;
+      messages = list
+          .where((message) =>
+              message.createdOn.millisecondsSinceEpoch >
+              model.currentUser.deletedAt!.millisecondsSinceEpoch)
+          .toList();
     });
   }
 

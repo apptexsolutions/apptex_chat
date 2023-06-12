@@ -24,14 +24,13 @@ class ConversationModel {
         _unreadMessageCount = unreadMessageCount,
         _users = users;
 
-  ChatUserModel get updateCurrentUser => AppTexChat.instance.currentUser;
-  ChatUserModel get oldCurrentUser => _users.firstWhere(
+  ChatUserModel get currentUser => _users.firstWhere(
       (element) => element.uid == AppTexChat.instance.currentUser.uid);
   ChatUserModel get otherUser => _users.firstWhere(
       (element) => element.uid != AppTexChat.instance.currentUser.uid);
   int get unreadMessageCount =>
-      _lastMessageSenderId != updateCurrentUser.uid ? _unreadMessageCount : 0;
-  bool get isLastMessageMine => _lastMessageSenderId == updateCurrentUser.uid;
+      _lastMessageSenderId != currentUser.uid ? _unreadMessageCount : 0;
+  bool get isLastMessageMine => _lastMessageSenderId == currentUser.uid;
   ConversationModel copyWith({
     String? chatRoomId,
     String? lastMessage,

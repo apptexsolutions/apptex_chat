@@ -39,7 +39,7 @@ class ChatViewModel extends BaseViewModel {
 
   //Getters
   List<MessageModel> get messages => _chatServices.messages;
-  ChatUserModel get currentUser => AppTexChat.instance.currentUser;
+  ChatUserModel get currentUser => model.currentUser;
   ChatUserModel get otherUser => model.otherUser;
 
   //Methods
