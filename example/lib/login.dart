@@ -79,7 +79,7 @@ class InboxScreen extends StatelessWidget {
             ChatUserModel(
               uid: uid,
               profileUrl: '',
-              name: 'New User Name',
+              name: uid == '1' ? 'Shah Raza' : 'Idrees',
               fcmToken: '',
             ),
           );
@@ -101,44 +101,67 @@ class InboxScreen extends StatelessWidget {
                   shrinkWrap: true,
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   itemCount: conversations.length,
-                  itemBuilder: (context, index) => Container(
-                    decoration: BoxDecoration(
+                  itemBuilder: (context, index) => Dismissible(
+                    key: UniqueKey(),
+                    onDismissed: (direction) async {
+                      await AppTexChat.instance.deleteChat(
+                        conversations[index].chatRoomId,
+                      );
+                    },
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: Offset(0, 1))
-                        ]),
-                    padding: EdgeInsets.all(10),
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CustomChatScreen(
-                              conversations[index],
-                            ),
-                          ),
-                        );
-                      },
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            conversations[index].otherUser.profileUrl ?? ''),
+                        color: Colors.red,
                       ),
-                      title: Text(conversations[index].otherUser.name),
-                      subtitle: Text(conversations[index].lastMessage),
-                      trailing: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
                         ),
-                        child: Text(
-                          conversations[index].unreadMessageCount.toString(),
-                          style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 2,
+                                offset: Offset(0, 1))
+                          ]),
+                      padding: EdgeInsets.all(10),
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CustomChatScreen(
+                                conversations[index],
+                              ),
+                            ),
+                          );
+                        },
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              conversations[index].otherUser.profileUrl ?? ''),
+                        ),
+                        title: Text(conversations[index].otherUser.name),
+                        subtitle: Text(conversations[index].lastMessage),
+                        trailing: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            conversations[index].unreadMessageCount.toString(),
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),

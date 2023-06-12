@@ -28,7 +28,12 @@ class ConversationServices {
           event.map((e) => ConversationModel.fromMap(e.data())).toList();
       temp.sort((b, a) => a.lastMessageTime.millisecondsSinceEpoch
           .compareTo(b.lastMessageTime.millisecondsSinceEpoch));
-      return temp;
+
+      return temp
+          .where((conversation) =>
+              conversation.lastMessageTime.millisecondsSinceEpoch >
+              conversation.currentUser.deletedAt!.millisecondsSinceEpoch)
+          .toList();
     });
   }
 

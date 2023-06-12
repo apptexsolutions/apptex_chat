@@ -36,6 +36,8 @@ class AppTexChat {
           name: 'AppTextChat');
     }
 
+    var timeStamp = Timestamp.now();
+
     final _dbServices = ChatDBServices.instance;
     final roomId = _getChatRoomID(userModel.uid);
     final model = ConversationModel(
@@ -43,7 +45,10 @@ class AppTexChat {
         lastMessage: initialMessage ?? '',
         userIds: [currentUser.uid, userModel.uid],
         lastMessageTime: Timestamp.now(),
-        users: [currentUser, userModel],
+        users: [
+          currentUser.copyWith(deletedAt: timeStamp),
+          userModel.copyWith(deletedAt: timeStamp)
+        ],
         lastMessageSenderId: initialMessage == null ? '' : currentUser.uid,
         isRequestSent: false,
         unreadMessageCount: 0);
@@ -55,6 +60,11 @@ class AppTexChat {
     } else {
       return model;
     }
+  }
+
+  Future<void> deleteChat(String chatRoomId) async {
+    final _dbServices = ChatDBServices.instance;
+    await _dbServices.deleteConversation(roomId: chatRoomId);
   }
 
   Future<void> sendTextMessage(String text) async {

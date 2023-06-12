@@ -1,11 +1,8 @@
 import 'dart:io';
 
+import 'package:apptex_chat/apptex_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
-import '../../apptex_chat.dart';
-import '../../models/conversation_model.dart';
-import '../../models/message_model.dart';
 import '../constant/strings.dart';
 
 class ChatDBServices {
@@ -111,5 +108,20 @@ class ChatDBServices {
         .collection(messagesCollection)
         .doc(messageId)
         .delete();
+  }
+
+  Future<void> deleteConversation({required String roomId}) async {
+    var conversationDoc =
+        await _firestore.collection(conversationCollection).doc(roomId).get();
+    ConversationModel conversationModel =
+        ConversationModel.fromMap(conversationDoc.data() ?? {});
+    List<ChatUserModel> users = [
+      conversationModel.currentUser.copyWith(deletedAt: Timestamp.now()),
+      conversationModel.otherUser,
+    ];
+    await _firestore
+        .collection(conversationCollection)
+        .doc(roomId)
+        .update({'users': users.map((e) => e.toMap()).toList()});
   }
 }
