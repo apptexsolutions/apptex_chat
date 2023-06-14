@@ -63,3 +63,16 @@
 ## 1.2.2
 * Statemanagement trasfered to Provider
 * UI Fixes
+
+
+## 2.0.0
+* Statemanagement trasfered to Provider
+* Delete Chat feautre
+* Voice Message bug fixes
+* UI Fixes
+* Emoji's feature added
+* Documentation updated
+* Fully Customizable Chat screen and Conversation screen with builders
+* Performance Improved
+* Other bug fixes
+
