@@ -19,8 +19,9 @@
 
 ## Gallery
 <div style="display:flex">
-<code><img height="500px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Messages.png"></code>
-<code><img height="500px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png"></code>
+<code><img height="500px" src="https://raw.githubusercontent.com/apptexsolutions/apptex_chat/main/imgs/Chats.png"></code>
+<code><img height="500px" src="https://raw.githubusercontent.com/apptexsolutions/apptex_chat/main/imgs/Messages.png"></code>
+<code><img height="500px" src="https://raw.githubusercontent.com/apptexsolutions/apptex_chat/main/imgs/emojis.PNG"></code>
 </div>
 
 ## Installation
