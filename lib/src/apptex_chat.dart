@@ -188,17 +188,21 @@ class AppTexChat {
     final _dbServices = ChatDBServices.instance;
 
     final _chatService = ChatServices.instance;
+    String name =
+        currentUser.uid + Timestamp.now().millisecondsSinceEpoch.toString();
+    String _url = await _dbServices.uploadFile(file, "ApptexChat/$name");
+    log("URL =============> $_url");
     final model = MessageModel(
         id: '',
         code: 'MP3',
-        content: '',
+        content: _url,
         senderId: currentUser.uid,
         createdOn:
             Timestamp.fromDate(DateTime.now().add(_ntpOffeset.milliseconds)),
         isMessageRead: false);
 
     if (_chatService.conversationModel != null) {
-      final _id = await _dbServices.sendMessage(
+      await _dbServices.sendMessage(
           _chatService.conversationModel!.chatRoomId, model);
       _dbServices
           .updateConversation(_chatService.conversationModel!.chatRoomId, {
@@ -208,12 +212,9 @@ class AppTexChat {
       });
       _dbServices
           .updateUnreadMessageCount(_chatService.conversationModel!.chatRoomId);
-      String name =
-          currentUser.uid + Timestamp.now().millisecondsSinceEpoch.toString();
-      String _url = await _dbServices.uploadFile(file, "ApptexChat/$name");
-      log("URL =============> $_url");
-      await _dbServices.updateExistingMessage(
-          _id, _chatService.conversationModel!.chatRoomId, {'content': _url});
+
+      // await _dbServices.updateExistingMessage(
+      //     _id, _chatService.conversationModel!.chatRoomId, {'content': _url});
     } else {
       log('Conversation Model is Null', name: 'Apptext Chat');
     }

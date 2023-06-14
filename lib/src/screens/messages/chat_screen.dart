@@ -22,6 +22,7 @@ class ChatScreen extends StatelessWidget {
   final Widget Function(DateTime dateTime)? timeWidgetBuilder;
   final Widget? typingWidget;
   final bool showMicButton;
+  final bool showImagePicker;
 
   ///It is a PreferredSizeWidget Function it should return PreferredSizeWidget like AppBar
   ///and this provide you two ChatuserModel parameters the first one is currentUser and the other is otherUser
@@ -44,7 +45,8 @@ class ChatScreen extends StatelessWidget {
       this.timeWidgetBuilder,
       this.typingWidget,
       this.showMicButton = true,
-      this.bubbleBuilder})
+      this.bubbleBuilder,
+      this.showImagePicker = true})
       : super(key: key);
 
   @override
@@ -70,7 +72,8 @@ class ChatScreen extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
-                  child: typingWidget ?? defaultTypingArea(showMicButton),
+                  child: typingWidget ??
+                      defaultTypingArea(showMicButton, showImagePicker),
                 ),
               ),
               body: model.isChatReady
@@ -183,7 +186,7 @@ class ChatScreen extends StatelessWidget {
   }
 }
 
-Widget defaultTypingArea(bool showMicButton) {
+Widget defaultTypingArea(bool showMicButton, bool showImagePicker) {
   return Consumer<ChatViewModel>(
     builder: (context, model, child) {
       return Padding(
@@ -273,21 +276,22 @@ Widget defaultTypingArea(bool showMicButton) {
                                   },
                                 ),
                         ),
-                        IconButton(
-                          onPressed: () async {
-                            FocusScope.of(context).unfocus();
-                            model.showEmojiPicker = false;
-                            File? image = await model.pickMedia();
-                            if (image != null) {
-                              model.sendMedia(image);
-                            }
-                            model.update();
-                          },
-                          icon: const Icon(
-                            Icons.camera_alt,
-                            color: Color.fromARGB(255, 121, 120, 120),
+                        if (showImagePicker)
+                          IconButton(
+                            onPressed: () async {
+                              FocusScope.of(context).unfocus();
+                              model.showEmojiPicker = false;
+                              File? image = await model.pickMedia();
+                              if (image != null) {
+                                model.sendMedia(image);
+                              }
+                              model.update();
+                            },
+                            icon: const Icon(
+                              Icons.camera_alt,
+                              color: Color.fromARGB(255, 121, 120, 120),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

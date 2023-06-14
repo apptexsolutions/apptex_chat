@@ -60,18 +60,19 @@ class AudioBubbleViewModel extends BaseViewModel {
   downloadAudio() async {
     isDownloading = true;
 
-    await _downloadFile(model.content, name!);
+    await _downloadFile(model.content);
 
     isDownloading = false;
     isFileExist();
     notifyListeners();
   }
 
-  Future<File> _downloadFile(String url, String filename) async {
+  Future<File> _downloadFile(String url) async {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
-    File file = File(myTempDir.path + '/' + name!);
+    var path = "${myTempDir.path}/$name";
+    File file = File(path);
     await file.writeAsBytes(bytes);
     return file;
   }
@@ -87,7 +88,8 @@ class AudioBubbleViewModel extends BaseViewModel {
   }
 
   isFileExist() async {
-    audio = File(myTempDir.path + '/' + name!);
+    var path = "${myTempDir.path}/$name";
+    audio = File(path);
     if (await audio!.exists()) {
       fileExist = true;
       playerController.preparePlayer(
