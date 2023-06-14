@@ -1,42 +1,20 @@
- This Package will give you a unique and pre-designed chatting system based on Firebase Firestore and Firebase Cloud.  It also has Push Notifications and a Custom Editable theme for both screens, such as Home Screen and Chat Screen.
+ This package is a powerful and versatile solution for implementing real-time chat functionality in your Flutter applications. Built on Firebase Firestore and Firebase Cloud, this package provides a unique and pre-designed chatting system with features such as push notifications and a customizable theme for the Inbox Screen and Chat Screen.
 
-Home Screen : 
-It has all the Users which are recently contacted..
-
-Chat Screen : 
-Ofcourse, a chat screen to chat. No explaination needed but, Yes you can change colors and themes
 
 
 ## Platform Tested : Result OK
 
 | Android | iOS | macOS | Web | Linux | Windows |
 |---------|-----|-------|-----|-------|---------|
-| ✔       | ✔   | :x:   |  ✔  | :x:   | :x:     |
-
-## Installation
-
-Add the following dependency to your `pubspec.yaml` file:
-
-```yaml
-dependencies:
-  apptex_chat: ^1.2.2
-```
-
-Then, run `flutter pub get` to install the package.
+| ✔       | ✔   | :x:   | :x: |  :x:  |   :x:   |
 
 
-
-## Features
-
-1. Easy to use
-2. Direct Integration
-3. Firebase with only two listeners
-4. Pre-Build UI
-5. Start Chat with single function.
-6. No Extra Database needed
-7. Push Notifications
-8. All Chatting Features
-
+## Key Features
+* <b>Easy to use:</b> The package offers a straightforward implementation process, allowing you to integrate chat functionality seamlessly into your app.
+* <b>Direct Integration:</b> Firebase Firestore and Firebase Cloud are directly integrated, ensuring reliable and efficient communication between users.
+* <b>Pre-Build UI:</b> The package comes with a pre-built user interface for the chat screens, eliminating the need for extensive design work.
+* <b>Start Chat with a Single Function:</b> Initiating a chat is as simple as calling a single function, enabling users to connect and communicate quickly.
+* <b>Customizable Themes:</b> Both the Home Screen and Chat Screen can be customized to match your app's design and branding.
 
 
 ## Gallery
@@ -45,84 +23,136 @@ Then, run `flutter pub get` to install the package.
 <code><img height="500px" src="https://raw.githubusercontent.com/XeroDays/apptex_chat/main/imgs/Chats.png"></code>
 </div>
 
+## Installation
+
+To get started, add the following dependency to your pubspec.yaml file:
+
+```yaml
+dependencies:
+  apptex_chat: ^2.0.0
+```
+
+Then, run `flutter pub get` to install the package.
 
 
 ## Usage
 
 **Step 1 : Firebase Configuration**
  1. Install Firebase in your project
- 2. Download firebase.json and firebase.infoplist file for your project from firebase.
+ 2. Download google-services.json and GoogleService-Info.plist file for your project from firebase.
  3. Inilize firebase in the main function.
 
-**Step 2 : Initialize AppTexChat**
- 1. Call AppTexChat.init(); in main(); 
- For Example
+**Step 2 : User Authentication**
+
+To enable chat functionality, you need to authenticate users. When a user signs up or logs in, you can pass their information to AppTexChat using the `initChat` method.
  ```dart
-//This is your main function
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
-  AppTexChat.init();
-  runApp(const MyApp());
-}
+// Here you can set the current user to the Apptex chat
+AppTexChat.instance.initChat(
+  currentUser: ChatUserModel(
+    uid: "{uid}",
+    profileUrl: "{Profile url}",
+    name: "{Currect User Name}",
+    fcmToken: "{Fcm Token}", //Pass empty string if you don't have fcm token
+  ),
+);
+```
+Replace `Current User Name`, `uid`, `profile URL`, and `Fcm Token` with the corresponding values for the user.
+
+
+
+**Step 3 : Starting a Chat**
+
+To start a chat with another user, call the `startNewConversationWith` function:
+
+ ```dart
+ //Here you need to pass the other user's info
+ AppTexChat.instance.startNewConversationWith(
+   ChatUserModel(
+     uid: "Other user uid",
+     profileUrl: 'Other user profile',
+     name: 'Other user name',
+     fcmToken: 'Other user fcm token',
+   ),
+ );
 ```
 
 
-**Step 3 : Login your current User at Login State Changes**
-1. When the Auth User is Signed-up or Logged in, Use it there.
-For example
+## Show Conversations on Inbox Screen
+
+To see a list of all the conversations, use the `ConversationsScreen` widget. It has a builder parameter which gives you the flexibility to list the conversation according to your app's design.
  ```dart
-// Here you can set the current user to the Apptex chat, ProfileURl is Optional
-    AppTexChat.instance.Login_My_User(
-                      FullName: "{Currect User Name}",
-                      your_uuid: "{uuid}",
-                      profileUrl: "{profile url}");
+// Example 
+ConversationsScreen(
+   builder: (conversations, isLoading) => ListView.separated(
+     separatorBuilder: (context, index) => SizedBox(height: 20),
+     shrinkWrap: true,
+     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+     itemCount: conversations.length,
+     itemBuilder: (context, index) => Container(
+       decoration: BoxDecoration(
+         borderRadius: BorderRadius.circular(10),
+         color: Colors.white,
+         boxShadow: [
+           BoxShadow(
+             color: Colors.grey.withOpacity(0.5),
+             spreadRadius: 1,
+             blurRadius: 2,
+             offset: Offset(0, 1),
+           )
+         ],
+       ),
+       padding: EdgeInsets.all(10),
+       child: ListTile(
+         onTap: () {
+           //TODO: Navigate to chat screen
+         },
+         leading: CircleAvatar(
+           backgroundImage:
+               NetworkImage(conversations[index].otherUser.profileUrl ?? ''),
+         ),
+         title: Text(conversations[index].otherUser.name),
+         subtitle: Text(conversations[index].lastMessage),
+         trailing: Container(
+           padding: EdgeInsets.all(5),
+           decoration: BoxDecoration(
+             color: Colors.blue,
+             shape: BoxShape.circle,
+           ),
+           child: Text(
+             conversations[index].unreadMessageCount.toString(),
+             style: TextStyle(color: Colors.white),
+           ),
+         ),
+       ),
+     ),
+   ),
+ );
 ```
 
 
-**Step 4 : Start Chat with some user**
+## Display messages of a specific chat
 
-1. Just Call this function to start chat.
-2. Ka-Bo0om! That's it. Chat Started.
-
+To see messages of a specific conversation, use the `ChatScreen` widget. It has an appBarBuilder(required) and 
+bubbleBuilder(optional) parameter which gives you the flexibility to create custom appbar and chat bubbles according to your app's design.
 
  ```dart
-// Here you pass the BuildContext, and the reciever name and UUID to which user you want to talk to.
-   AppTexChat.instance.Start_Chat_With(context,
-                    receiver_name: other.name,
-                    receiver_id: other.uuid,
-                    receiver_profileUrl: other.url);
-```
-
-
-**Step 5 : Open HomeScreen**
-
-1. To open all chats connected to that specific user, just go to this chat screen.
-2. Use this line
- ```dart
-// Here you pass the BuildContext to open upa all chats.
-  AppTexChat.instance.OpenMessages(context);
-```
-
-
-**Optional : Get AllChats Widget**
-
-1. To get the Widget for all of the chats.
-2. Use this line
- ```dart
-// Here you pass the BuildContext to open upa all chats.
-  AppTexChat.instance.GetMyMessages(context);
+ChatScreen(
+  conversationModel: conversationModel, 
+  showMicButton: false, //It is true by default, set it to false if you don't want voice messages
+  appBarBuilder: ((currentUser, otherUser) => AppBar()), //Builder to create custom AppBar
+);
 ```
 
 
 
 ## Features Status
 1. Chating ✅ 
-2. Voice recording ✅ 
+2. Voice messages ✅ 
 3. Images ✅ 
-4. Videos 🚫
-5. Document 🚫
-6. Location 🚫
+4. Emojis ✅ 
+5. Videos 🚫
+6. Document 🚫
+7. Location 🚫
 
 
 ## Additional information
