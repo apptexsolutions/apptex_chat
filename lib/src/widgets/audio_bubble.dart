@@ -41,7 +41,7 @@ class AudioBubble extends StatelessWidget {
             decoration: BoxDecoration(
               color: model.isMine
                   ? Theme.of(context).primaryColor
-                  : Theme.of(context).primaryColor.withOpacity(0.15),
+                  : Theme.of(context).primaryColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.only(
                 topLeft: model.isMine
                     ? Radius.circular(radius)
