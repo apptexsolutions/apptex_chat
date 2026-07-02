@@ -45,9 +45,7 @@ class ChatViewModel extends BaseViewModel {
   //Methods
 
   void _init() {
-    recorderController = RecorderController()
-      ..bitRate = 48000
-      ..sampleRate = 44100;
+    recorderController = RecorderController();
     _dbServices.updateConversation(model.chatRoomId, {
       'users': [
         currentUser.toMap(),
@@ -102,7 +100,13 @@ class ChatViewModel extends BaseViewModel {
     notifyListeners();
     String name =
         currentUser.uid + Timestamp.now().millisecondsSinceEpoch.toString();
-    await recorderController.record(path: Directory.systemTemp.path + '/$name');
+    await recorderController.record(
+      path: Directory.systemTemp.path + '/$name',
+      recorderSettings: const RecorderSettings(
+        bitRate: 48000,
+        sampleRate: 44100,
+      ),
+    );
   }
 
   cancelVoiceMessage() {

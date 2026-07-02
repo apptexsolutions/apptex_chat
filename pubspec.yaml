@@ -4,8 +4,8 @@ version: 2.0.0
 homepage: https://github.com/apptexsolutions/apptex_chat
 
 environment:
-  sdk: ">=2.16.2 <4.0.0"
-  flutter: ">=1.17.0"
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
@@ -13,22 +13,22 @@ dependencies:
   
 
   # Firebase Dependencies
-  cloud_firestore:
-  firebase_storage:
-  ntp: 
-  cached_network_image: 
-  provider: 
-  audio_waveforms:
-  intl:
-  emoji_picker_flutter: 
-  image_picker:
+  cloud_firestore: ^6.6.0
+  firebase_storage: ^13.0.0
+  ntp: ^2.0.0
+  cached_network_image: ^3.4.1
+  provider: ^6.1.2
+  audio_waveforms: ^2.0.2
+  intl: ^0.19.0
+  emoji_picker_flutter: ^4.4.0
+  image_picker: ^1.1.2
   
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^5.0.0
  
 flutter:
 

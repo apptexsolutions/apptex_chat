@@ -83,7 +83,8 @@ class AudioBubbleViewModel extends BaseViewModel {
       playerController.pausePlayer();
     } else {
       playerController.seekTo(0);
-      playerController.startPlayer(finishMode: FinishMode.pause);
+      playerController.setFinishMode(finishMode: FinishMode.pause);
+      playerController.startPlayer();
     }
   }
 

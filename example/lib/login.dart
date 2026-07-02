@@ -129,7 +129,7 @@ class InboxScreen extends StatelessWidget {
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
+                                color: Colors.grey.withValues(alpha: 0.5),
                                 spreadRadius: 1,
                                 blurRadius: 2,
                                 offset: Offset(0, 1))

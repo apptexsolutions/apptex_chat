@@ -203,7 +203,7 @@ Widget defaultTypingArea(bool showMicButton, bool showImagePicker) {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.2),
+                      color: Colors.grey.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(40),
                     ),
                     child: Row(

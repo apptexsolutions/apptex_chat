@@ -181,6 +181,7 @@ More is about to Come:
     <a href="https://github.com/XeroDays" title="Code">💻</a> <a href="https://github.com/XeroDays" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/ShahSomething"><img src="https://avatars.githubusercontent.com/u/63047096?v=4" width="100px;" alt=""/><br /><sub><b>Shah Raza</b></sub></a><br /><a href="https://github.com/ShahSomething" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/mrcse"><img src="https://avatars.githubusercontent.com/u/73348512?v=4" width="100px;" alt=""/><br /><sub><b>Jamshid Ali</b></sub></a><br /><a href="https://github.com/mrcse" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/afaqxdev"><img src="https://avatars.githubusercontent.com/u/117840917?s=96&v=4" width="100px;" alt=""/><br /><sub><b>Afaq Zahir</b></sub></a><br /><a href="https://github.com/afaqxdev" title="Code">💻</a></td>
   </tr>
 </table>
 

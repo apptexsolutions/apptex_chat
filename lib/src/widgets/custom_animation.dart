@@ -70,8 +70,8 @@ class _CustomAnimationState extends State<CustomAnimation>
       builder: (context, widgetChild) {
         final decoration = BoxDecoration(
           shape: BoxShape.circle,
-          color: Theme.of(context).colorScheme.primary.withOpacity(
-                _alphaAnimation.value.clamp(
+          color: Theme.of(context).colorScheme.primary.withValues(
+                alpha: _alphaAnimation.value.clamp(
                   0.0,
                   1.0,
                 ),
